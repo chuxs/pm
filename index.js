@@ -77,6 +77,28 @@ app.get("/", async (req, res) => {
   res.render("index", { seats });
 });
 
+// Health check endpoint to verify deployment and config
+app.get("/api/health", async (req, res) => {
+  try {
+    const seats = await getSeatsData();
+    res.json({
+      status: "ok",
+      timestamp: new Date().toISOString(),
+      seats: seats,
+      config: {
+        hasStripeKey: !!process.env.STRIPE_SECRET_KEY,
+        hasWebhookSecret: !!process.env.STRIPE_WEBHOOK_SECRET,
+        nodeVersion: process.version,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: "error",
+      error: error.message,
+    });
+  }
+});
+
 // Webhook endpoint to handle Stripe payment confirmation
 app.post(
   "/api/webhook",
@@ -154,18 +176,35 @@ app.post(
 // Server-side function to decrement seats atomically
 const decrementSeats = async () => {
   try {
+    console.log("decrementSeats: Starting seat decrement transaction...");
     const availableRef = ref(db, "seats/available");
+
     const tx = await runTransaction(
       availableRef,
       (current) => {
+        console.log(
+          "decrementSeats: Transaction function called with current value:",
+          current,
+        );
         const available = Number(current ?? 0);
         if (!Number.isFinite(available) || available <= 0) {
+          console.log("decrementSeats: Aborting - no seats available");
           return;
         }
 
+        console.log(
+          `decrementSeats: Decrementing from ${available} to ${available - 1}`,
+        );
         return available - 1;
       },
       { applyLocally: false },
+    );
+
+    console.log(
+      "decrementSeats: Transaction result - committed:",
+      tx.committed,
+      "snapshot:",
+      tx.snapshot.val(),
     );
 
     if (tx.committed) {
