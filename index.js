@@ -177,7 +177,15 @@ app.post(
 const decrementSeats = async () => {
   try {
     console.log("decrementSeats: Starting seat decrement transaction...");
+    
+    // First, check what's actually in Firebase
+    const seatsRef = ref(db, "seats");
+    const fullSnapshot = await get(seatsRef);
+    console.log("decrementSeats: Full seats object from Firebase:", JSON.stringify(fullSnapshot.val()));
+    
     const availableRef = ref(db, "seats/available");
+    const availableSnapshot = await get(availableRef);
+    console.log("decrementSeats: Direct available value:", availableSnapshot.val(), "type:", typeof availableSnapshot.val());
 
     const tx = await runTransaction(
       availableRef,
@@ -185,10 +193,12 @@ const decrementSeats = async () => {
         console.log(
           "decrementSeats: Transaction function called with current value:",
           current,
+          "type:",
+          typeof current,
         );
         const available = Number(current ?? 0);
         if (!Number.isFinite(available) || available <= 0) {
-          console.log("decrementSeats: Aborting - no seats available");
+          console.log("decrementSeats: Aborting - no seats available. Available value:", available);
           return;
         }
 
