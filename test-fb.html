@@ -1,0 +1,1001 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Masterclass — Limited Seats</title>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+      import {
+        getDatabase,
+        ref,
+        onValue,
+        runTransaction,
+      } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+      // ─────────────────────────────────────────────
+      // 🔧 REPLACE WITH YOUR OWN FIREBASE CONFIG
+      // ─────────────────────────────────────────────
+      const firebaseConfig = {
+        apiKey: "YOUR_API_KEY",
+        authDomain: "YOUR_PROJECT.firebaseapp.com",
+        databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
+        projectId: "YOUR_PROJECT",
+        storageBucket: "YOUR_PROJECT.appspot.com",
+        messagingSenderId: "YOUR_SENDER_ID",
+        appId: "YOUR_APP_ID",
+      };
+      // ─────────────────────────────────────────────
+
+      const TOTAL_SEATS = 30; // Change this to your total seat count
+
+      const app = initializeApp(firebaseConfig);
+      const db = getDatabase(app);
+      const seatsRef = ref(db, "seats/available");
+
+      // ── Live seat counter ──────────────────────────────────────────────────
+      onValue(seatsRef, (snapshot) => {
+        const available = snapshot.val();
+        if (available === null) return;
+
+        const pct = Math.max(0, available / TOTAL_SEATS);
+        const filled = TOTAL_SEATS - available;
+
+        document.getElementById("seat-count").textContent = available;
+        document.getElementById("filled-count").textContent = filled;
+        document.getElementById("total-seats").textContent = TOTAL_SEATS;
+        document.getElementById("progress-bar").style.width =
+          `${(1 - pct) * 100}%`;
+
+        // Colour urgency
+        const bar = document.getElementById("progress-bar");
+        if (pct <= 0.2) {
+          bar.style.background = "#ef4444";
+          document.getElementById("urgency-label").textContent =
+            "🔥 Almost full!";
+        } else if (pct <= 0.5) {
+          bar.style.background = "#f59e0b";
+          document.getElementById("urgency-label").textContent =
+            "⚡ Filling up fast";
+        } else {
+          bar.style.background = "#22c55e";
+          document.getElementById("urgency-label").textContent =
+            "✅ Seats available";
+        }
+
+        // Disable form when full
+        if (available <= 0) {
+          document.getElementById("register-btn").disabled = true;
+          document.getElementById("register-btn").textContent = "Sold Out";
+          document.getElementById("urgency-label").textContent =
+            "❌ Fully booked";
+        }
+      });
+
+      // ── Claim a seat (call this after successful payment) ──────────────────
+      window.claimSeat = async function () {
+        let success = false;
+        await runTransaction(seatsRef, (current) => {
+          if (current === null || current <= 0) return; // abort if full
+          success = true;
+          return current - 1;
+        });
+        return success;
+      };
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      :root {
+        --ink: #0d0d0d;
+        --paper: #f5f0e8;
+        --gold: #c9933a;
+        --gold2: #e8b96a;
+        --muted: #7a7060;
+        --border: #d4c9b0;
+        --red: #c0392b;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        font-family: "DM Sans", sans-serif;
+        background: var(--paper);
+        color: var(--ink);
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+
+      /* ── Noise texture overlay ── */
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      /* ── Header ── */
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: var(--ink);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem 3rem;
+        border-bottom: 2px solid var(--gold);
+      }
+      .logo {
+        font-family: "Playfair Display", serif;
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--gold2);
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+      .nav-cta {
+        background: var(--gold);
+        color: var(--ink);
+        border: none;
+        border-radius: 2px;
+        padding: 0.55rem 1.4rem;
+        font-family: "DM Sans", sans-serif;
+        font-size: 0.82rem;
+        font-weight: 500;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      .nav-cta:hover {
+        background: var(--gold2);
+      }
+
+      /* ── Hero ── */
+      .hero {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        min-height: 92vh;
+      }
+      .hero-left {
+        padding: 6rem 4rem 4rem 5rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        border-right: 1px solid var(--border);
+      }
+      .eyebrow {
+        font-size: 0.72rem;
+        font-weight: 500;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--gold);
+        margin-bottom: 1.5rem;
+      }
+      h1 {
+        font-family: "Playfair Display", serif;
+        font-size: clamp(2.6rem, 5vw, 4.2rem);
+        font-weight: 900;
+        line-height: 1.08;
+        color: var(--ink);
+        margin-bottom: 1.5rem;
+      }
+      h1 em {
+        color: var(--gold);
+        font-style: italic;
+      }
+      .hero-desc {
+        font-size: 1.05rem;
+        line-height: 1.7;
+        color: var(--muted);
+        max-width: 38ch;
+        margin-bottom: 2.5rem;
+      }
+      .hero-actions {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      .btn-primary {
+        background: var(--ink);
+        color: var(--paper);
+        border: 2px solid var(--ink);
+        border-radius: 2px;
+        padding: 0.9rem 2.2rem;
+        font-family: "DM Sans", sans-serif;
+        font-size: 0.9rem;
+        font-weight: 500;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-decoration: none;
+        display: inline-block;
+      }
+      .btn-primary:hover {
+        background: var(--gold);
+        border-color: var(--gold);
+        color: var(--ink);
+      }
+      .btn-secondary {
+        background: transparent;
+        color: var(--muted);
+        border: none;
+        font-size: 0.85rem;
+        cursor: pointer;
+        text-decoration: underline;
+        font-family: "DM Sans", sans-serif;
+      }
+
+      /* ── Hero right: Seat counter ── */
+      .hero-right {
+        background: var(--ink);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 4rem 3rem;
+        position: relative;
+        overflow: hidden;
+      }
+      .hero-right::before {
+        content: "";
+        position: absolute;
+        top: -60px;
+        right: -60px;
+        width: 320px;
+        height: 320px;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle,
+          rgba(201, 147, 58, 0.15) 0%,
+          transparent 70%
+        );
+      }
+      .seat-card {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+        width: 100%;
+        max-width: 340px;
+      }
+      .seat-label {
+        font-size: 0.7rem;
+        font-weight: 500;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--gold);
+        margin-bottom: 1rem;
+      }
+      .seat-number {
+        font-family: "Playfair Display", serif;
+        font-size: clamp(5rem, 12vw, 9rem);
+        font-weight: 900;
+        line-height: 1;
+        color: var(--paper);
+        transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+      .seat-number.bump {
+        transform: scale(1.15);
+        color: var(--gold2);
+      }
+      .seat-sub {
+        font-size: 0.8rem;
+        color: #888;
+        margin-top: 0.4rem;
+        margin-bottom: 2.5rem;
+      }
+
+      /* Progress bar */
+      .progress-track {
+        background: #1e1e1e;
+        border-radius: 100px;
+        height: 8px;
+        overflow: hidden;
+        margin-bottom: 1rem;
+      }
+      .progress-fill {
+        height: 100%;
+        background: #22c55e;
+        border-radius: 100px;
+        transition:
+          width 0.6s ease,
+          background 0.4s ease;
+        width: 0%;
+      }
+      .progress-meta {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.72rem;
+        color: #666;
+      }
+      #urgency-label {
+        font-weight: 500;
+      }
+
+      .divider-line {
+        border: none;
+        border-top: 1px solid #2a2a2a;
+        margin: 2rem 0;
+      }
+      .seat-details {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        text-align: left;
+      }
+      .stat-item {
+      }
+      .stat-val {
+        font-family: "Playfair Display", serif;
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: var(--paper);
+      }
+      .stat-key {
+        font-size: 0.7rem;
+        color: #888;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+      }
+
+      /* ── Features strip ── */
+      .features {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        border-top: 1px solid var(--border);
+      }
+      .feature-item {
+        padding: 3.5rem 3rem;
+        border-right: 1px solid var(--border);
+        animation: fadeUp 0.6s ease both;
+      }
+      .feature-item:last-child {
+        border-right: none;
+      }
+      .feature-icon {
+        font-size: 1.8rem;
+        margin-bottom: 1rem;
+      }
+      .feature-title {
+        font-family: "Playfair Display", serif;
+        font-size: 1.15rem;
+        font-weight: 700;
+        margin-bottom: 0.6rem;
+      }
+      .feature-desc {
+        font-size: 0.9rem;
+        color: var(--muted);
+        line-height: 1.65;
+      }
+
+      /* ── Registration section ── */
+      #register {
+        position: relative;
+        z-index: 1;
+        background: var(--ink);
+        padding: 6rem 5rem;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 5rem;
+        align-items: start;
+      }
+      .register-left h2 {
+        font-family: "Playfair Display", serif;
+        font-size: clamp(2rem, 4vw, 3.2rem);
+        font-weight: 900;
+        color: var(--paper);
+        line-height: 1.1;
+        margin-bottom: 1.2rem;
+      }
+      .register-left h2 em {
+        color: var(--gold);
+        font-style: italic;
+      }
+      .register-left p {
+        color: #888;
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin-bottom: 2rem;
+      }
+      .price-tag {
+        display: inline-flex;
+        align-items: baseline;
+        gap: 0.4rem;
+        margin-bottom: 2rem;
+      }
+      .price-currency {
+        color: var(--gold);
+        font-size: 1.2rem;
+      }
+      .price-amount {
+        font-family: "Playfair Display", serif;
+        font-size: 3.5rem;
+        font-weight: 900;
+        color: var(--paper);
+        line-height: 1;
+      }
+      .price-period {
+        color: #888;
+        font-size: 0.85rem;
+      }
+      .perks {
+        list-style: none;
+      }
+      .perks li {
+        color: #aaa;
+        font-size: 0.9rem;
+        padding: 0.45rem 0;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        border-bottom: 1px solid #1e1e1e;
+      }
+      .perks li::before {
+        content: "→";
+        color: var(--gold);
+        font-weight: 700;
+      }
+
+      /* Form */
+      .register-form {
+        background: #161616;
+        border: 1px solid #2a2a2a;
+        border-radius: 4px;
+        padding: 2.5rem;
+      }
+      .form-title {
+        font-family: "Playfair Display", serif;
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: var(--paper);
+        margin-bottom: 0.4rem;
+      }
+      .form-subtitle {
+        font-size: 0.8rem;
+        color: #888;
+        margin-bottom: 2rem;
+      }
+      .mini-seat-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: rgba(201, 147, 58, 0.12);
+        border: 1px solid rgba(201, 147, 58, 0.3);
+        border-radius: 100px;
+        padding: 0.3rem 0.9rem;
+        font-size: 0.75rem;
+        color: var(--gold2);
+        margin-bottom: 1.8rem;
+      }
+      .mini-seat-pill .dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--gold);
+        animation: pulse 1.5s infinite;
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.3;
+        }
+      }
+
+      .form-group {
+        margin-bottom: 1.2rem;
+      }
+      .form-group label {
+        display: block;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: #888;
+        margin-bottom: 0.45rem;
+      }
+      .form-group input,
+      .form-group select {
+        width: 100%;
+        background: #0d0d0d;
+        border: 1px solid #2a2a2a;
+        border-radius: 2px;
+        padding: 0.75rem 1rem;
+        color: var(--paper);
+        font-family: "DM Sans", sans-serif;
+        font-size: 0.9rem;
+        transition: border-color 0.2s;
+      }
+      .form-group input:focus,
+      .form-group select:focus {
+        outline: none;
+        border-color: var(--gold);
+      }
+      .form-group input::placeholder {
+        color: #444;
+      }
+
+      .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+
+      #register-btn {
+        width: 100%;
+        margin-top: 1.4rem;
+        background: var(--gold);
+        color: var(--ink);
+        border: none;
+        border-radius: 2px;
+        padding: 1rem;
+        font-family: "DM Sans", sans-serif;
+        font-size: 0.9rem;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition:
+          background 0.2s,
+          opacity 0.2s;
+      }
+      #register-btn:hover:not(:disabled) {
+        background: var(--gold2);
+      }
+      #register-btn:disabled {
+        background: #2a2a2a;
+        color: #555;
+        cursor: not-allowed;
+      }
+      .form-note {
+        text-align: center;
+        font-size: 0.72rem;
+        color: #555;
+        margin-top: 1rem;
+      }
+
+      /* Success state */
+      .success-banner {
+        display: none;
+        background: rgba(34, 197, 94, 0.08);
+        border: 1px solid rgba(34, 197, 94, 0.25);
+        border-radius: 4px;
+        padding: 1.5rem;
+        text-align: center;
+        color: #86efac;
+        font-size: 0.9rem;
+        margin-top: 1rem;
+      }
+      .success-banner.show {
+        display: block;
+      }
+
+      /* Error state */
+      .error-banner {
+        display: none;
+        background: rgba(239, 68, 68, 0.08);
+        border: 1px solid rgba(239, 68, 68, 0.25);
+        border-radius: 4px;
+        padding: 1rem;
+        text-align: center;
+        color: #fca5a5;
+        font-size: 0.85rem;
+        margin-top: 0.8rem;
+      }
+      .error-banner.show {
+        display: block;
+      }
+
+      /* ── Footer ── */
+      footer {
+        position: relative;
+        z-index: 1;
+        background: var(--ink);
+        border-top: 1px solid #1e1e1e;
+        padding: 2rem 5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      footer p {
+        font-size: 0.75rem;
+        color: #555;
+      }
+      footer a {
+        color: var(--gold);
+        text-decoration: none;
+      }
+
+      /* ── Animations ── */
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(24px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .hero-left {
+        animation: fadeUp 0.7s ease both;
+      }
+      .hero-right {
+        animation: fadeUp 0.7s 0.15s ease both;
+      }
+
+      /* ── Responsive ── */
+      @media (max-width: 900px) {
+        .hero {
+          grid-template-columns: 1fr;
+          min-height: auto;
+        }
+        .hero-left {
+          padding: 4rem 2rem;
+          border-right: none;
+          border-bottom: 1px solid var(--border);
+        }
+        .hero-right {
+          padding: 3rem 2rem;
+        }
+        .features {
+          grid-template-columns: 1fr;
+        }
+        .feature-item {
+          border-right: none;
+          border-bottom: 1px solid var(--border);
+        }
+        #register {
+          grid-template-columns: 1fr;
+          padding: 4rem 2rem;
+          gap: 3rem;
+        }
+        header {
+          padding: 1rem 1.5rem;
+        }
+        footer {
+          flex-direction: column;
+          gap: 1rem;
+          padding: 2rem;
+          text-align: center;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ── HEADER ── -->
+    <header>
+      <div class="logo">The Masterclass</div>
+      <button
+        class="nav-cta"
+        onclick="
+          document
+            .getElementById('register')
+            .scrollIntoView({ behavior: 'smooth' })
+        "
+      >
+        Reserve Your Seat
+      </button>
+    </header>
+
+    <!-- ── HERO ── -->
+    <section class="hero">
+      <div class="hero-left">
+        <p class="eyebrow">Spring Cohort · 2025 · Intensive</p>
+        <h1>
+          Build the skills<br />that <em>actually</em><br />change careers.
+        </h1>
+        <p class="hero-desc">
+          A hands-on 8-week workshop for professionals ready to level up. Small
+          cohort. Real projects. Lifetime access to the community.
+        </p>
+        <div class="hero-actions">
+          <a href="#register" class="btn-primary">Claim Your Spot</a>
+          <button class="btn-secondary">Learn what's inside ↓</button>
+        </div>
+      </div>
+
+      <div class="hero-right">
+        <div class="seat-card">
+          <p class="seat-label">Seats Remaining</p>
+          <div class="seat-number" id="seat-count">–</div>
+          <p class="seat-sub">of <span id="total-seats">–</span> total spots</p>
+
+          <div class="progress-track">
+            <div class="progress-fill" id="progress-bar"></div>
+          </div>
+          <div class="progress-meta">
+            <span id="urgency-label">Loading…</span>
+            <span><span id="filled-count">–</span> enrolled</span>
+          </div>
+
+          <hr class="divider-line" />
+
+          <div class="seat-details">
+            <div class="stat-item">
+              <div class="stat-val">8 wks</div>
+              <div class="stat-key">Duration</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-val">Live</div>
+              <div class="stat-key">Format</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-val">Apr 7</div>
+              <div class="stat-key">Start Date</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-val">∞</div>
+              <div class="stat-key">Community</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── FEATURES ── -->
+    <section class="features">
+      <div class="feature-item" style="animation-delay: 0.1s">
+        <div class="feature-icon">🎯</div>
+        <h3 class="feature-title">Project-Based Learning</h3>
+        <p class="feature-desc">
+          Every week builds toward a portfolio piece you're proud to show. No
+          fluff, no filler—only skills that matter.
+        </p>
+      </div>
+      <div class="feature-item" style="animation-delay: 0.2s">
+        <div class="feature-icon">🧑‍🏫</div>
+        <h3 class="feature-title">Expert-Led Sessions</h3>
+        <p class="feature-desc">
+          Live workshops with industry practitioners. Ask questions, get
+          feedback, and fast-track your growth with real mentors.
+        </p>
+      </div>
+      <div class="feature-item" style="animation-delay: 0.3s">
+        <div class="feature-icon">🤝</div>
+        <h3 class="feature-title">Tight-Knit Cohort</h3>
+        <p class="feature-desc">
+          We cap enrollment intentionally. You'll know everyone by name, and
+          they'll become your professional network for life.
+        </p>
+      </div>
+    </section>
+
+    <!-- ── REGISTRATION ── -->
+    <section id="register">
+      <div class="register-left">
+        <h2>Reserve your<br /><em>seat today.</em></h2>
+        <p>
+          Spots fill up fast—this cohort has never reopened after selling out.
+          Lock in your place before the countdown hits zero.
+        </p>
+
+        <div class="price-tag">
+          <span class="price-currency">$</span>
+          <span class="price-amount">997</span>
+          <span class="price-period">/ one-time</span>
+        </div>
+
+        <ul class="perks">
+          <li>8 weeks of live sessions (recorded)</li>
+          <li>Private community access — forever</li>
+          <li>Weekly 1-on-1 office hours</li>
+          <li>Certificate of completion</li>
+          <li>Resource library & templates</li>
+          <li>30-day money-back guarantee</li>
+        </ul>
+      </div>
+
+      <div class="register-form">
+        <p class="form-title">Join the Cohort</p>
+        <p class="form-subtitle">
+          Complete the form below to secure your spot.
+        </p>
+
+        <div class="mini-seat-pill">
+          <span class="dot"></span>
+          <span id="form-seat-inline">– seats left</span>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>First Name</label>
+            <input type="text" id="fname" placeholder="Ada" />
+          </div>
+          <div class="form-group">
+            <label>Last Name</label>
+            <input type="text" id="lname" placeholder="Lovelace" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" id="email" placeholder="ada@example.com" />
+        </div>
+
+        <div class="form-group">
+          <label>How did you hear about us?</label>
+          <select id="referral" style="color: #888">
+            <option value="" disabled selected>Select one…</option>
+            <option>Social media</option>
+            <option>Friend / colleague</option>
+            <option>Search engine</option>
+            <option>Newsletter</option>
+            <option>Other</option>
+          </select>
+        </div>
+
+        <button id="register-btn" onclick="handleRegister()">
+          Claim My Seat — $997
+        </button>
+
+        <div class="error-banner" id="error-banner"></div>
+        <div class="success-banner" id="success-banner">
+          🎉 You're in! Check your email for next steps and payment details.
+        </div>
+
+        <p class="form-note">
+          🔒 Secure & encrypted · 30-day money-back guarantee
+        </p>
+      </div>
+    </section>
+
+    <!-- ── FOOTER ── -->
+    <footer>
+      <p>© 2025 The Masterclass. All rights reserved.</p>
+      <p>
+        <a href="#">Privacy Policy</a> · <a href="#">Terms</a> ·
+        <a href="mailto:hello@example.com">hello@example.com</a>
+      </p>
+    </footer>
+
+    <script>
+      // Keep mini pill in sync
+      const seatCountEl = document.getElementById("seat-count");
+      const observer = new MutationObserver(() => {
+        const n = seatCountEl.textContent;
+        document.getElementById("form-seat-inline").textContent =
+          `${n} seat${n === "1" ? "" : "s"} left`;
+      });
+      observer.observe(seatCountEl, {
+        childList: true,
+        characterData: true,
+        subtree: true,
+      });
+
+      // Bump animation when count changes
+      let lastVal = null;
+      setInterval(() => {
+        const val = seatCountEl.textContent;
+        if (val !== lastVal && lastVal !== null) {
+          seatCountEl.classList.add("bump");
+          setTimeout(() => seatCountEl.classList.remove("bump"), 450);
+        }
+        lastVal = val;
+      }, 500);
+
+      // ── Check for successful payment on page load ─────────────────────────
+      window.addEventListener("DOMContentLoaded", async () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const paymentSuccess = urlParams.get("payment_success");
+
+        if (paymentSuccess === "true") {
+          const email = urlParams.get("email");
+          const success = document.getElementById("success-banner");
+          const err = document.getElementById("error-banner");
+
+          try {
+            // Claim a seat after successful payment
+            const claimed = await window.claimSeat();
+
+            if (claimed) {
+              success.classList.add("show");
+              document.getElementById("register-btn").textContent =
+                "✓ Registered";
+              document.getElementById("register-btn").disabled = true;
+
+              // Populate form with user's email if available
+              if (email) {
+                document.getElementById("email").value =
+                  decodeURIComponent(email);
+              }
+
+              // Clean up URL
+              window.history.replaceState(
+                {},
+                document.title,
+                window.location.pathname,
+              );
+            } else {
+              err.textContent =
+                "Payment successful, but all seats are now full. We'll process your refund.";
+              err.classList.add("show");
+            }
+          } catch (e) {
+            err.textContent =
+              "Payment successful, but there was an error. Please contact support.";
+            err.classList.add("show");
+            console.error(e);
+          }
+        }
+      });
+
+      // ── Registration handler ─────────────────────────────────────────────
+      async function handleRegister() {
+        const fname = document.getElementById("fname").value.trim();
+        const lname = document.getElementById("lname").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const err = document.getElementById("error-banner");
+        const success = document.getElementById("success-banner");
+
+        err.classList.remove("show");
+        success.classList.remove("show");
+
+        if (!fname || !lname || !email) {
+          err.textContent = "Please fill in all required fields.";
+          err.classList.add("show");
+          return;
+        }
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+          err.textContent = "Please enter a valid email address.";
+          err.classList.add("show");
+          return;
+        }
+
+        const btn = document.getElementById("register-btn");
+        btn.disabled = true;
+        btn.textContent = "Redirecting to Stripe…";
+
+        try {
+          // Store user info in sessionStorage for after payment
+          sessionStorage.setItem(
+            "registration_data",
+            JSON.stringify({ fname, lname, email }),
+          );
+
+          // Build return URL with payment success parameter
+          const returnUrl = `${window.location.origin}${window.location.pathname}?payment_success=true&email=${encodeURIComponent(email)}`;
+
+          // Redirect to Stripe Payment Link with prefilled email
+          // Note: Add ?prefilled_email= to your Stripe link in Stripe Dashboard settings
+          const stripeUrl = `https://buy.stripe.com/test_00wcN44LM0eU5CC2wNcbC00?client_reference_id=${encodeURIComponent(email)}&prefilled_email=${encodeURIComponent(email)}`;
+
+          // Redirect to Stripe
+          window.location.href = stripeUrl;
+        } catch (e) {
+          err.textContent = "Something went wrong. Please try again.";
+          err.classList.add("show");
+          btn.disabled = false;
+          btn.textContent = "Claim My Seat — $997";
+          console.error(e);
+        }
+      }
+    </script>
+  </body>
+</html>
