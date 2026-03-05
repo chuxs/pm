@@ -41,20 +41,25 @@ const totalSeatsRef = ref(db, "seats/total");
 
 // ─────────────────────────────────────────────
 
-// Store values from Firebase
-let availableSeats = null;
-let totalSeats = null;
+let TOTAL_SEATS = 0;
 
-// Function to update UI when data changes
-function updateSeatDisplay() {
-  if (availableSeats === null || totalSeats === null) return;
+// ── Pull total seats from Firebase ──────────────────────────────
+onValue(totalSeatsRef, (snapshot) => {
+  TOTAL_SEATS = snapshot.val() || 0;
+  document.getElementById("total-seats").textContent = TOTAL_SEATS;
+});
 
-  const pct = Math.max(0, availableSeats / totalSeats);
-  const filled = totalSeats - availableSeats;
+// ── Live seat counter ──────────────────────────────────────────────────
+onValue(seatsRef, (snapshot) => {
+  const available = snapshot.val();
+  if (available === null) return;
 
-  document.getElementById("seat-count").textContent = availableSeats;
+  const pct = Math.max(0, available / TOTAL_SEATS);
+  const filled = TOTAL_SEATS - available;
+
+  document.getElementById("seat-count").textContent = available;
   document.getElementById("filled-count").textContent = filled;
-  document.getElementById("total-seats").textContent = totalSeats;
+  document.getElementById("total-seats").textContent = TOTAL_SEATS;
   document.getElementById("progress-bar").style.width =
     `${(1 - pct) * 100}%`;
 
@@ -75,29 +80,11 @@ function updateSeatDisplay() {
   }
 
   // Disable form when full
-  if (availableSeats <= 0) {
+  if (available <= 0) {
     document.getElementById("register-btn").disabled = true;
     document.getElementById("register-btn").textContent = "Sold Out";
     document.getElementById("urgency-label").textContent =
       "❌ Fully booked";
-  }
-}
-
-// ── Listen for available seats from Firebase ──────────────────────────
-onValue(seatsRef, (snapshot) => {
-  const available = snapshot.val();
-  if (available !== null) {
-    availableSeats = available;
-    updateSeatDisplay();
-  }
-});
-
-// ── Listen for total seats from Firebase ──────────────────────────────
-onValue(totalSeatsRef, (snapshot) => {
-  const total = snapshot.val();
-  if (total !== null) {
-    totalSeats = total;
-    updateSeatDisplay();
   }
 });
 
