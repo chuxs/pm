@@ -109,8 +109,6 @@ app.post(
     }
 
     const sig = req.headers["stripe-signature"];
-    console.log("Webhook received");
-    console.log("Signature:", sig ? "present" : "missing");
 
     let event;
     try {
@@ -119,13 +117,12 @@ app.post(
         sig,
         stripeEndpointSecret,
       );
-      console.log("Webhook signature verified successfully");
     } catch (err) {
       console.error("Webhook signature verification failed:", err.message);
       return res.status(400).send(`Webhook Error: ${err.message}`);
     }
 
-    console.log("Event type:", event.type);
+    console.log(`Webhook received: ${event.type}`);
 
     // Prevent duplicate processing because Stripe retries webhook delivery.
     const eventRef = ref(db, `processedStripeEvents/${event.id}`);
@@ -152,13 +149,12 @@ app.post(
     // Handle checkout.session.completed event
     if (event.type === "checkout.session.completed") {
       const session = event.data.object;
-      console.log("Payment successful for session:", session.id);
+      console.log("Payment completed for session:", session.id);
 
       // Decrement seats atomically using Firebase transaction
       try {
         const result = await decrementSeats();
-        console.log("Seats decremented successfully:", result);
-        return res.status(200).json({ received: true, success: true });
+        return res.status(200).json({ received: true, success: result });
       } catch (error) {
         console.error("Error decrementing seats:", error);
         return res
@@ -176,73 +172,35 @@ app.post(
 // Server-side function to decrement seats atomically
 const decrementSeats = async () => {
   try {
-    console.log("decrementSeats: Starting seat decrement transaction...");
-
-    // First, check what's actually in Firebase
-    const seatsRef = ref(db, "seats");
-    const fullSnapshot = await get(seatsRef);
-    console.log(
-      "decrementSeats: Full seats object from Firebase:",
-      JSON.stringify(fullSnapshot.val()),
-    );
-
     const availableRef = ref(db, "seats/available");
-    const availableSnapshot = await get(availableRef);
-    console.log(
-      "decrementSeats: Direct available value:",
-      availableSnapshot.val(),
-      "type:",
-      typeof availableSnapshot.val(),
-    );
 
     const tx = await runTransaction(
       availableRef,
       (current) => {
-        console.log(
-          "decrementSeats: Transaction function called with current value:",
-          current,
-          "type:",
-          typeof current,
-        );
-
-        // On first call, current is null - return a sentinel to let transaction continue
+        // On first call, current is null - return it to let transaction continue
         if (current === null) {
-          console.log(
-            "decrementSeats: First transaction call (null) - continuing...",
-          );
-          return current; // Return current to signal "read the value and call me again"
+          return current;
         }
 
         const available = Number(current);
         if (!Number.isFinite(available) || available <= 0) {
-          console.log(
-            "decrementSeats: Aborting - no seats available. Available value:",
-            available,
-          );
-          return; // Abort transaction
+          return; // Abort transaction - no seats available
         }
 
-        console.log(
-          `decrementSeats: Decrementing from ${available} to ${available - 1}`,
-        );
         return available - 1;
       },
       { applyLocally: false },
     );
 
-    console.log(
-      "decrementSeats: Transaction result - committed:",
-      tx.committed,
-      "snapshot:",
-      tx.snapshot.val(),
-    );
-
     if (tx.committed) {
-      console.log("Seats decremented. Available:", tx.snapshot.val());
+      console.log(
+        "Seats decremented successfully. Available:",
+        tx.snapshot.val(),
+      );
       return true;
     }
 
-    console.error("No seats available to decrement");
+    console.error("Failed to decrement seats - no seats available");
     return false;
   } catch (error) {
     console.error("Error in decrementSeats:", error);
