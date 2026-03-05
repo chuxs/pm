@@ -204,13 +204,22 @@ const decrementSeats = async () => {
           "type:",
           typeof current,
         );
-        const available = Number(current ?? 0);
+
+        // On first call, current is null - return a sentinel to let transaction continue
+        if (current === null) {
+          console.log(
+            "decrementSeats: First transaction call (null) - continuing...",
+          );
+          return current; // Return current to signal "read the value and call me again"
+        }
+
+        const available = Number(current);
         if (!Number.isFinite(available) || available <= 0) {
           console.log(
             "decrementSeats: Aborting - no seats available. Available value:",
             available,
           );
-          return;
+          return; // Abort transaction
         }
 
         console.log(
