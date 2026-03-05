@@ -2,7 +2,7 @@
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "https://test-fb.vercel.app"
+      "dest": "pm-one-psi.vercel.app"
     }
   ]
 }
