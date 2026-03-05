@@ -7,72 +7,99 @@
 
     <!-- Firebase SDK -->
     <script type="module">
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+      import { initializeApp } from "firebase/app";
       import {
         getDatabase,
         ref,
         onValue,
         runTransaction,
-      } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+      } from "firebase/database";
 
       // ─────────────────────────────────────────────
       // 🔧 REPLACE WITH YOUR OWN FIREBASE CONFIG
       // ─────────────────────────────────────────────
-      const firebaseConfig = {
-        apiKey: "YOUR_API_KEY",
-        authDomain: "YOUR_PROJECT.firebaseapp.com",
-        databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
-        projectId: "YOUR_PROJECT",
-        storageBucket: "YOUR_PROJECT.appspot.com",
-        messagingSenderId: "YOUR_SENDER_ID",
-        appId: "YOUR_APP_ID",
-      };
-      // ─────────────────────────────────────────────
+// Import the functions you need from the SDKs you need
 
-      const TOTAL_SEATS = 30; // Change this to your total seat count
 
-      const app = initializeApp(firebaseConfig);
-      const db = getDatabase(app);
-      const seatsRef = ref(db, "seats/available");
 
-      // ── Live seat counter ──────────────────────────────────────────────────
-      onValue(seatsRef, (snapshot) => {
-        const available = snapshot.val();
-        if (available === null) return;
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyDdTF6elencgMx_bid3e_GNwgjdRGRaKoM",
+  authDomain: "pm-seats.firebaseapp.com",
+  projectId: "pm-seats",
+  storageBucket: "pm-seats.firebasestorage.app",
+  messagingSenderId: "64143629785",
+  appId: "1:64143629785:web:77678bd02c91dd9a110dc8"
+};
 
-        const pct = Math.max(0, available / TOTAL_SEATS);
-        const filled = TOTAL_SEATS - available;
+const app = initializeApp(firebaseConfig);
 
-        document.getElementById("seat-count").textContent = available;
-        document.getElementById("filled-count").textContent = filled;
-        document.getElementById("total-seats").textContent = TOTAL_SEATS;
-        document.getElementById("progress-bar").style.width =
-          `${(1 - pct) * 100}%`;
+const db = getDatabase(app);
 
-        // Colour urgency
-        const bar = document.getElementById("progress-bar");
-        if (pct <= 0.2) {
-          bar.style.background = "#ef4444";
-          document.getElementById("urgency-label").textContent =
-            "🔥 Almost full!";
-        } else if (pct <= 0.5) {
-          bar.style.background = "#f59e0b";
-          document.getElementById("urgency-label").textContent =
-            "⚡ Filling up fast";
-        } else {
-          bar.style.background = "#22c55e";
-          document.getElementById("urgency-label").textContent =
-            "✅ Seats available";
-        }
+const seatsRef = ref(db, "seats/available");
+const totalSeatsRef = ref(db, "seats/total");
 
-        // Disable form when full
-        if (available <= 0) {
-          document.getElementById("register-btn").disabled = true;
-          document.getElementById("register-btn").textContent = "Sold Out";
-          document.getElementById("urgency-label").textContent =
-            "❌ Fully booked";
-        }
-      });
+// ─────────────────────────────────────────────
+
+// Store values from Firebase
+let availableSeats = null;
+let totalSeats = null;
+
+// Function to update UI when data changes
+function updateSeatDisplay() {
+  if (availableSeats === null || totalSeats === null) return;
+
+  const pct = Math.max(0, availableSeats / totalSeats);
+  const filled = totalSeats - availableSeats;
+
+  document.getElementById("seat-count").textContent = availableSeats;
+  document.getElementById("filled-count").textContent = filled;
+  document.getElementById("total-seats").textContent = totalSeats;
+  document.getElementById("progress-bar").style.width =
+    `${(1 - pct) * 100}%`;
+
+  // Colour urgency
+  const bar = document.getElementById("progress-bar");
+  if (pct <= 0.2) {
+    bar.style.background = "#ef4444";
+    document.getElementById("urgency-label").textContent =
+      "🔥 Almost full!";
+  } else if (pct <= 0.5) {
+    bar.style.background = "#f59e0b";
+    document.getElementById("urgency-label").textContent =
+      "⚡ Filling up fast";
+  } else {
+    bar.style.background = "#22c55e";
+    document.getElementById("urgency-label").textContent =
+      "✅ Seats available";
+  }
+
+  // Disable form when full
+  if (availableSeats <= 0) {
+    document.getElementById("register-btn").disabled = true;
+    document.getElementById("register-btn").textContent = "Sold Out";
+    document.getElementById("urgency-label").textContent =
+      "❌ Fully booked";
+  }
+}
+
+// ── Listen for available seats from Firebase ──────────────────────────
+onValue(seatsRef, (snapshot) => {
+  const available = snapshot.val();
+  if (available !== null) {
+    availableSeats = available;
+    updateSeatDisplay();
+  }
+});
+
+// ── Listen for total seats from Firebase ──────────────────────────────
+onValue(totalSeatsRef, (snapshot) => {
+  const total = snapshot.val();
+  if (total !== null) {
+    totalSeats = total;
+    updateSeatDisplay();
+  }
+});
 
       // ── Claim a seat (call this after successful payment) ──────────────────
       window.claimSeat = async function () {
