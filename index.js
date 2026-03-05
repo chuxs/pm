@@ -3,7 +3,7 @@ import bodyParser from "body-parser";
 import path from "path";
 import { fileURLToPath } from "url";
 import { initializeApp } from "firebase/app";
-import { getDatabase, ref, get, update } from "firebase/database";
+import { getDatabase, ref, get, runTransaction } from "firebase/database";
 import session from "express-session";
 import Stripe from "stripe";
 import dotenv from "dotenv";
@@ -16,9 +16,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Initialize Stripe
-const stripe = new Stripe(
-  process.env.STRIPE_SECRET_KEY,
-);
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const stripeEndpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
 if (!stripeEndpointSecret) {
@@ -45,7 +43,6 @@ const db = getDatabase(firebaseApp);
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
 app.use(
   session({
@@ -85,6 +82,10 @@ app.post(
   "/api/webhook",
   express.raw({ type: "application/json" }),
   async (req, res) => {
+    if (!stripeEndpointSecret) {
+      return res.status(500).json({ error: "Missing STRIPE_WEBHOOK_SECRET" });
+    }
+
     const sig = req.headers["stripe-signature"];
     console.log("Webhook received");
     console.log("Signature:", sig ? "present" : "missing");
@@ -99,16 +100,32 @@ app.post(
       console.log("Webhook signature verified successfully");
     } catch (err) {
       console.error("Webhook signature verification failed:", err.message);
-      // For testing: continue anyway but log the error
-      try {
-        event = JSON.parse(req.body.toString());
-        console.log("Continuing without signature verification for testing");
-      } catch (parseErr) {
-        return res.status(400).send(`Webhook Error: ${err.message}`);
-      }
+      return res.status(400).send(`Webhook Error: ${err.message}`);
     }
 
     console.log("Event type:", event.type);
+
+    // Prevent duplicate processing because Stripe retries webhook delivery.
+    const eventRef = ref(db, `processedStripeEvents/${event.id}`);
+    const eventTx = await runTransaction(
+      eventRef,
+      (current) => {
+        if (current !== null) {
+          return;
+        }
+
+        return {
+          processedAt: Date.now(),
+          type: event.type,
+        };
+      },
+      { applyLocally: false },
+    );
+
+    if (!eventTx.committed) {
+      console.log("Duplicate event ignored:", event.id);
+      return res.status(200).json({ received: true, duplicate: true });
+    }
 
     // Handle checkout.session.completed event
     if (event.type === "checkout.session.completed") {
@@ -134,50 +151,30 @@ app.post(
   },
 );
 
-// Test endpoint to verify Firebase writes
-app.post("/api/test-decrement", async (req, res) => {
-  try {
-    console.log("Test decrement endpoint called");
-    const seatsRef = ref(db, "seats");
-    const snapshot = await get(seatsRef);
-    const data = snapshot.val();
-    console.log("Current seats from Firebase:", data);
-
-    if (data && data.available > 0) {
-      await update(seatsRef, {
-        available: data.available - 1,
-      });
-      const newSnapshot = await get(seatsRef);
-      const newData = newSnapshot.val();
-      console.log("Updated seats in Firebase:", newData);
-      res.json({ success: true, before: data, after: newData });
-    } else {
-      res.status(400).json({ error: "No seats available" });
-    }
-  } catch (error) {
-    console.error("Test decrement error:", error);
-    res.status(500).json({ error: error.message });
-  }
-});
-
 // Server-side function to decrement seats atomically
 const decrementSeats = async () => {
   try {
-    const seatsRef = ref(db, "seats");
-    const snapshot = await get(seatsRef);
-    const data = snapshot.val();
+    const availableRef = ref(db, "seats/available");
+    const tx = await runTransaction(
+      availableRef,
+      (current) => {
+        const available = Number(current ?? 0);
+        if (!Number.isFinite(available) || available <= 0) {
+          return;
+        }
 
-    if (data && data.available > 0) {
-      // Atomic update - decrement by 1
-      await update(seatsRef, {
-        available: data.available - 1,
-      });
-      console.log(`Seats decremented. Available: ${data.available - 1}`);
+        return available - 1;
+      },
+      { applyLocally: false },
+    );
+
+    if (tx.committed) {
+      console.log("Seats decremented. Available:", tx.snapshot.val());
       return true;
-    } else {
-      console.error("No seats available to decrement");
-      return false;
     }
+
+    console.error("No seats available to decrement");
+    return false;
   } catch (error) {
     console.error("Error in decrementSeats:", error);
     throw error;
