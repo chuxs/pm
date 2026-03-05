@@ -1,8 +1,9 @@
 {
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
+  "buildCommand": "npm install",
+  "framework": "express",
+  "functions": {
+    "index.js": {
+      "runtime": "nodejs20.x"
     }
-  ]
+  }
 }
