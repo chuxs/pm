@@ -206,6 +206,12 @@ body.instructor-open {
   line-height: 1.72;
 }
 
+.instructor-name {
+  color: #f3c970;
+  font-weight: 700;
+  text-shadow: 0 0 12px rgba(243, 201, 112, 0.25);
+}
+
 .instructor-copy p + p {
   margin-top: 0.7rem;
 }
@@ -348,11 +354,12 @@ h1 em {
 }
 
 .seat-number {
-  font-family: "Cormorant Garamond", serif;
+  font-family: "Playfair Display", serif;
   font-size: clamp(3.5rem, 10vw, 5.2rem);
   line-height: 0.9;
   color: var(--paper);
-  font-weight: 700;
+  font-weight: 900;
+  letter-spacing: -0.02em;
 }
 
 .seat-sub {
@@ -551,6 +558,122 @@ h1 em {
     rgba(22, 28, 45, 0.9)
   );
   border-color: rgba(243, 201, 112, 0.34);
+}
+
+.who-section {
+  padding: 0 clamp(1rem, 6vw, 5rem) var(--space-lg);
+}
+
+.who-title {
+  font-family: "Cormorant Garamond", serif;
+  color: var(--ink);
+  font-size: clamp(1.9rem, 4.8vw, 3rem);
+  line-height: 0.98;
+  margin-bottom: 2rem;
+}
+
+.who-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.who-card {
+  background: rgba(255, 255, 255, 0.85);
+  border: 2px solid var(--line);
+  border-radius: var(--radius);
+  padding: clamp(1.2rem, 3vw, 1.8rem);
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.who-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(191, 95, 56, 0.12);
+}
+
+.who-card-label {
+  color: var(--rust);
+  font-weight: 700;
+  font-size: clamp(0.95rem, 2vw, 1.05rem);
+  margin-bottom: 0.8rem;
+}
+
+.who-list {
+  list-style: none;
+  color: #2a313e;
+  line-height: 1.7;
+}
+
+.who-list li {
+  padding: 0.5rem 0;
+  font-size: clamp(0.93rem, 1.8vw, 1rem);
+}
+
+.who-list li::before {
+  content: "→";
+  color: var(--rust);
+  margin-right: 0.6rem;
+  font-weight: 700;
+}
+
+.who-card-highlight {
+  background: linear-gradient(150deg, #fff9eb 0%, #fef5e8 100%);
+  border-color: var(--clay);
+  border-width: 2px;
+}
+
+.who-card-highlight p {
+  color: var(--ink);
+  line-height: 1.75;
+}
+
+.who-card-highlight p + p {
+  margin-top: 0.8rem;
+}
+
+.who-card-highlight em {
+  color: var(--rust);
+  font-style: italic;
+  font-weight: 700;
+}
+
+.who-card-bonus {
+  background: linear-gradient(150deg, #162035 0%, #1a2a40 100%);
+  border-color: rgba(229, 207, 157, 0.45);
+}
+
+.who-card-bonus h3 {
+  color: #f3c970;
+  font-family: "Cormorant Garamond", serif;
+  font-size: clamp(1.45rem, 3.2vw, 1.8rem);
+  margin-bottom: 0.8rem;
+  letter-spacing: 0.05em;
+}
+
+.who-card-bonus p {
+  color: #e5ebf5;
+  line-height: 1.75;
+}
+
+.who-card-bonus p + .who-list {
+  margin-top: 0.8rem;
+}
+
+.who-card-bonus .who-list {
+  color: #d8dfed;
+}
+
+.who-card-bonus .who-list li::before {
+  color: #f3c970;
+}
+
+.who-final {
+  margin-top: 1rem;
+  color: #f3c970;
+  font-weight: 700;
 }
 
 #register {
@@ -868,6 +991,14 @@ footer a {
     align-items: flex-start;
   }
 
+  .launchpad-intro {
+    display: none;
+  }
+
+  .who-cards > .who-card:nth-child(3) {
+    display: none;
+  }
+
   .details-grid,
   .form-row {
     grid-template-columns: 1fr;
@@ -877,6 +1008,7 @@ footer a {
   .story,
   .details,
   .launchpad,
+  .who-section,
   #register {
     padding-left: 0.9rem;
     padding-right: 0.9rem;
