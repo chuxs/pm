@@ -8,13 +8,13 @@
 
 :root {
   --ink: #12151c;
-  --deep: #1b2537;
-  --paper: #fffaf0;
-  --sand: #f3e4c8;
-  --clay: #e5cf9d;
-  --rust: #bf5f38;
-  --muted: #647084;
-  --line: #d6c6a5;
+  --deep: #0f3928;
+  --paper: #ffffff;
+  --sand: #e8f8eb;
+  --clay: #bee8c7;
+  --rust: #f28c28;
+  --muted: #4e6b58;
+  --line: #b8dfc0;
   --success: #22c55e;
   --danger: #ef4444;
   --radius: 14px;
@@ -36,20 +36,19 @@ body {
   background:
     radial-gradient(
       circle at 10% 15%,
-      rgba(229, 207, 157, 0.45),
+      rgba(190, 232, 199, 0.14),
       transparent 35%
     ),
-    radial-gradient(circle at 92% 4%, rgba(191, 95, 56, 0.25), transparent 28%),
-    linear-gradient(160deg, #fffdf8 0%, #f8f0df 45%, #fef9ef 100%);
+    linear-gradient(180deg, #ffffff 0%, #ffffff 100%);
 }
 
 header {
   position: sticky;
   top: 0;
   z-index: 90;
-  background: rgba(18, 21, 28, 0.95);
+  background: rgba(255, 255, 255, 0.96);
   backdrop-filter: blur(6px);
-  border-bottom: 1px solid rgba(229, 207, 157, 0.35);
+  border-bottom: 1px solid rgba(184, 223, 192, 0.55);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -64,39 +63,44 @@ header {
 }
 
 .logo {
-  font-family: "Cormorant Garamond", serif;
-  color: var(--sand);
-  font-size: clamp(1.1rem, 2.5vw, 1.4rem);
-  letter-spacing: 0.05em;
-  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+}
+
+.logo img {
+  display: block;
+  width: auto;
+  height: clamp(28px, 4vw, 42px);
 }
 
 .nav-cta {
-  border: 1px solid var(--clay);
-  background: linear-gradient(120deg, #f6ddb1, #dba35f);
-  color: #2e2112;
+  border: 1px solid rgba(15, 57, 40, 0.35);
+  background: #ffffff;
+  color: #0f3928;
   border-radius: 999px;
-  padding: 0.65rem 1.25rem;
+  padding: 0.65rem 1.1rem;
   font-family: "Space Grotesk", sans-serif;
-  font-size: 0.82rem;
+  font-size: 0.75rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.05em;
   cursor: pointer;
   transition:
     transform 0.2s ease,
-    filter 0.2s ease;
+    border-color 0.2s ease,
+    background 0.2s ease;
 }
 
 .nav-cta:hover {
   transform: translateY(-1px);
-  filter: brightness(1.02);
+  background: rgba(232, 248, 235, 0.28);
+  border-color: rgba(15, 57, 40, 0.45);
 }
 
 .nav-ghost {
-  border: 1px solid rgba(243, 228, 200, 0.55);
-  background: rgba(255, 255, 255, 0.06);
-  color: var(--paper);
+  border: 1px solid rgba(15, 57, 40, 0.35);
+  background: #ffffff;
+  color: #0f3928;
   border-radius: 999px;
   padding: 0.65rem 1.1rem;
   font-family: "Space Grotesk", sans-serif;
@@ -113,8 +117,8 @@ header {
 
 .nav-ghost:hover {
   transform: translateY(-1px);
-  background: rgba(243, 228, 200, 0.1);
-  border-color: var(--clay);
+  background: rgba(232, 248, 235, 0.28);
+  border-color: rgba(15, 57, 40, 0.45);
 }
 
 .instructor-panel {
@@ -124,10 +128,10 @@ header {
   background:
     radial-gradient(
       circle at 15% 16%,
-      rgba(243, 228, 200, 0.17),
+      rgba(190, 232, 199, 0.22),
       transparent 35%
     ),
-    linear-gradient(160deg, #0c1323 0%, #111a2b 40%, #17243a 100%);
+    linear-gradient(160deg, #0a2f20 0%, #11422d 40%, #165338 100%);
   transform: translateX(100%);
   opacity: 0;
   visibility: hidden;
@@ -172,9 +176,9 @@ body.instructor-open {
 }
 
 .instructor-close {
-  border: 1px solid rgba(243, 228, 200, 0.4);
+  border: 1px solid rgba(232, 248, 235, 0.45);
   background: rgba(255, 255, 255, 0.05);
-  color: #eef2fb;
+  color: #f3fff5;
   border-radius: 999px;
   padding: 0.55rem 0.95rem;
   font-family: "Space Grotesk", sans-serif;
@@ -186,8 +190,8 @@ body.instructor-open {
 }
 
 .instructor-title {
-  font-family: "Cormorant Garamond", serif;
-  color: #fff9ef;
+  font-family: "Poppins", sans-serif;
+  color: #ffffff;
   font-size: clamp(2rem, 6vw, 4rem);
   line-height: 0.95;
   max-width: 20ch;
@@ -196,20 +200,20 @@ body.instructor-open {
 
 .instructor-copy {
   background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(243, 228, 200, 0.23);
+  border: 1px solid rgba(232, 248, 235, 0.3);
   border-radius: var(--radius);
   padding: clamp(1rem, 3vw, 1.8rem);
 }
 
 .instructor-copy p {
-  color: #d8dfed;
+  color: #def2e3;
   line-height: 1.72;
 }
 
 .instructor-name {
-  color: #f3c970;
+  color: #f7a147;
   font-weight: 700;
-  text-shadow: 0 0 12px rgba(243, 201, 112, 0.25);
+  text-shadow: 0 0 12px rgba(242, 140, 40, 0.2);
 }
 
 .instructor-copy p + p {
@@ -222,14 +226,14 @@ body.instructor-open {
 }
 
 .instructor-copy li {
-  color: #f2f5fb;
+  color: #f3fff5;
   line-height: 1.55;
   padding: 0.35rem 0;
 }
 
 .instructor-copy li::before {
   content: "•";
-  color: #f3c970;
+  color: #f7a147;
   margin-right: 0.55rem;
 }
 
@@ -256,7 +260,7 @@ body.instructor-open {
 }
 
 h1 {
-  font-family: "Cormorant Garamond", serif;
+  font-family: "Poppins", sans-serif;
   font-size: clamp(2rem, 6vw, 4.2rem);
   line-height: 0.98;
   font-weight: 700;
@@ -270,7 +274,7 @@ h1 em {
 }
 
 .hero-desc {
-  color: #2d3644;
+  color: #294232;
   line-height: 1.7;
   font-size: clamp(0.95rem, 2vw, 1.1rem);
   margin-bottom: 1.7rem;
@@ -292,8 +296,8 @@ h1 em {
 .btn-primary {
   text-decoration: none;
   display: inline-block;
-  background: linear-gradient(120deg, #bf5f38, #e27f48);
-  color: #fffaf0;
+  background: linear-gradient(120deg, #0d7a3f, #18a455);
+  color: #ffffff;
   border: 0;
   border-radius: 10px;
   padding: 0.9rem 1.5rem;
@@ -308,12 +312,12 @@ h1 em {
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(191, 95, 56, 0.26);
+  box-shadow: 0 8px 24px rgba(24, 164, 85, 0.3);
 }
 
 .hero-right {
-  background: linear-gradient(180deg, var(--deep), #101826);
-  border: 1px solid rgba(243, 228, 200, 0.2);
+  background: linear-gradient(180deg, #0f3928, #145238);
+  border: 1px solid rgba(184, 223, 192, 0.35);
   border-radius: var(--radius);
   min-height: clamp(250px, 34vw, 380px);
   padding: 1.25rem;
@@ -333,7 +337,7 @@ h1 em {
   border-radius: 50%;
   background: radial-gradient(
     circle,
-    rgba(229, 207, 157, 0.24),
+    rgba(242, 140, 40, 0.22),
     transparent 70%
   );
 }
@@ -346,7 +350,7 @@ h1 em {
 }
 
 .seat-label {
-  color: var(--clay);
+  color: #c8e8d0;
   font-size: 0.84rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -357,14 +361,14 @@ h1 em {
   font-family: "Playfair Display", serif;
   font-size: clamp(3.5rem, 10vw, 5.2rem);
   line-height: 0.9;
-  color: var(--paper);
+  color: #ffffff;
   font-weight: 900;
   letter-spacing: -0.02em;
 }
 
 .seat-sub {
   margin-top: 0.3rem;
-  color: #a8b2c4;
+  color: #d3eed9;
   font-size: 0.88rem;
 }
 
@@ -374,15 +378,15 @@ h1 em {
 }
 
 .story-wrap {
-  background: rgba(255, 255, 255, 0.72);
-  border: 1px solid rgba(214, 198, 165, 0.8);
+  background: rgba(255, 255, 255, 0.86);
+  border: 1px solid rgba(184, 223, 192, 0.85);
   border-radius: var(--radius);
   padding: clamp(1.2rem, 3vw, 2rem);
   line-height: 1.72;
 }
 
 .story-wrap p {
-  color: #2a313e;
+  color: #26402f;
   font-size: clamp(0.95rem, 1.8vw, 1.05rem);
 }
 
@@ -429,30 +433,30 @@ h1 em {
 
 .card-dark {
   grid-column: span 4;
-  background: #162035;
-  color: #e9eef8;
-  border-color: rgba(171, 189, 221, 0.25);
+  background: #0f3928;
+  color: #ecfff0;
+  border-color: rgba(184, 223, 192, 0.35);
 }
 
 .card-dark li::before,
 .card-accent li::before {
   content: "•";
-  color: #f3c970;
+  color: #f7a147;
   margin-right: 0.55rem;
 }
 
 .card-light {
   grid-column: span 5;
-  background: #fff9eb;
-  color: #2d3746;
-  border-color: #ead6ac;
+  background: #f4fff6;
+  color: #294232;
+  border-color: #b8dfc0;
 }
 
 .card-accent {
   grid-column: span 3;
-  background: linear-gradient(160deg, #bf5f38, #a44f2d);
-  color: #fff9ef;
-  border-color: rgba(255, 236, 206, 0.3);
+  background: linear-gradient(160deg, #1b8d49, #0f6c36);
+  color: #f6fff8;
+  border-color: rgba(184, 223, 192, 0.45);
 }
 
 .launchpad {
@@ -460,12 +464,12 @@ h1 em {
 }
 
 .launchpad-intro {
-  background: rgba(255, 255, 255, 0.7);
-  border: 1px solid rgba(214, 198, 165, 0.8);
+  background: rgba(255, 255, 255, 0.84);
+  border: 1px solid rgba(184, 223, 192, 0.85);
   border-radius: var(--radius);
   padding: clamp(1.2rem, 3vw, 1.8rem);
   line-height: 1.72;
-  color: #2a313e;
+  color: #26402f;
 }
 
 .launchpad-intro p {
@@ -478,22 +482,22 @@ h1 em {
 
 .launchpad-panel {
   margin-top: 1rem;
-  background: linear-gradient(160deg, #0f1728, #131c2d 70%, #111725);
-  border: 1px solid rgba(214, 198, 165, 0.22);
+  background: linear-gradient(160deg, #0f3928, #145238 70%, #0f3122);
+  border: 1px solid rgba(184, 223, 192, 0.36);
   border-radius: var(--radius);
   padding: clamp(1.2rem, 3.2vw, 2rem);
 }
 
 .launchpad-panel h2 {
-  font-family: "Cormorant Garamond", serif;
-  color: #fff9ef;
+  font-family: "Poppins", sans-serif;
+  color: #ffffff;
   font-size: clamp(1.9rem, 4.8vw, 3rem);
   line-height: 0.98;
 }
 
 .launchpad-sub {
   margin-top: 0.75rem;
-  color: #b8c4da;
+  color: #d5efdc;
   max-width: 72ch;
   line-height: 1.7;
 }
@@ -507,25 +511,25 @@ h1 em {
 
 .launchpad-card {
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(184, 223, 192, 0.2);
   padding: clamp(1rem, 2.6vw, 1.5rem);
 }
 
 .launchpad-card h3 {
-  color: #f7deaf;
+  color: #f7a147;
   font-family: "Cormorant Garamond", serif;
   font-size: clamp(1.35rem, 3vw, 1.7rem);
   margin-bottom: 0.6rem;
 }
 
 .launchpad-card p {
-  color: #d4dced;
+  color: #e3f8e8;
   line-height: 1.65;
 }
 
 .launchpad-note {
-  color: #fff9ef;
+  color: #ffffff;
   font-weight: 700;
   margin-bottom: 0.45rem;
 }
@@ -540,24 +544,24 @@ h1 em {
 }
 
 .launchpad-card li {
-  color: #d4dced;
+  color: #e3f8e8;
   line-height: 1.52;
   padding: 0.35rem 0;
 }
 
 .launchpad-card li::before {
   content: "→";
-  color: #f3c970;
+  color: #f7a147;
   margin-right: 0.55rem;
 }
 
 .launchpad-card-accent {
   background: linear-gradient(
     150deg,
-    rgba(191, 95, 56, 0.25),
-    rgba(22, 28, 45, 0.9)
+    rgba(242, 140, 40, 0.14),
+    rgba(15, 57, 40, 0.88)
   );
-  border-color: rgba(243, 201, 112, 0.34);
+  border-color: rgba(242, 140, 40, 0.35);
 }
 
 .who-section {
@@ -565,7 +569,7 @@ h1 em {
 }
 
 .who-title {
-  font-family: "Cormorant Garamond", serif;
+  font-family: "Poppins", sans-serif;
   color: var(--ink);
   font-size: clamp(1.9rem, 4.8vw, 3rem);
   line-height: 0.98;
@@ -591,7 +595,7 @@ h1 em {
 
 .who-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 32px rgba(191, 95, 56, 0.12);
+  box-shadow: 0 12px 32px rgba(20, 112, 58, 0.16);
 }
 
 .who-card-label {
@@ -603,7 +607,7 @@ h1 em {
 
 .who-list {
   list-style: none;
-  color: #2a313e;
+  color: #26402f;
   line-height: 1.7;
 }
 
@@ -620,7 +624,7 @@ h1 em {
 }
 
 .who-card-highlight {
-  background: linear-gradient(150deg, #fff9eb 0%, #fef5e8 100%);
+  background: linear-gradient(150deg, #ffffff 0%, #f7fff8 100%);
   border-color: var(--clay);
   border-width: 2px;
 }
@@ -641,12 +645,12 @@ h1 em {
 }
 
 .who-card-bonus {
-  background: linear-gradient(150deg, #162035 0%, #1a2a40 100%);
-  border-color: rgba(229, 207, 157, 0.45);
+  background: linear-gradient(150deg, #11422d 0%, #0f3928 100%);
+  border-color: rgba(184, 223, 192, 0.45);
 }
 
 .who-card-bonus h3 {
-  color: #f3c970;
+  color: #f7a147;
   font-family: "Cormorant Garamond", serif;
   font-size: clamp(1.45rem, 3.2vw, 1.8rem);
   margin-bottom: 0.8rem;
@@ -654,7 +658,7 @@ h1 em {
 }
 
 .who-card-bonus p {
-  color: #e5ebf5;
+  color: #e7faec;
   line-height: 1.75;
 }
 
@@ -663,24 +667,24 @@ h1 em {
 }
 
 .who-card-bonus .who-list {
-  color: #d8dfed;
+  color: #d5f2dd;
 }
 
 .who-card-bonus .who-list li::before {
-  color: #f3c970;
+  color: #f7a147;
 }
 
 .who-final {
   margin-top: 1rem;
-  color: #f3c970;
+  color: #f7a147;
   font-weight: 700;
 }
 
 #register {
-  background: linear-gradient(168deg, #141922 0%, #10161f 100%);
+  background: linear-gradient(168deg, #0f3928 0%, #0c2f20 100%);
   margin-top: clamp(1rem, 3vw, 2rem);
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid rgba(184, 223, 192, 0.35);
+  border-bottom: 1px solid rgba(184, 223, 192, 0.35);
   padding: var(--space-xl) clamp(1rem, 6vw, 5rem);
   display: grid;
   gap: var(--space-lg);
@@ -688,10 +692,10 @@ h1 em {
 }
 
 .register-left h2 {
-  font-family: "Cormorant Garamond", serif;
+  font-family: "Poppins", sans-serif;
   font-size: clamp(2rem, 5vw, 3.5rem);
   line-height: 0.97;
-  color: #f8f8f8;
+  color: #f3fff5;
   margin-bottom: 0.95rem;
 }
 
@@ -701,7 +705,7 @@ h1 em {
 }
 
 .register-left p {
-  color: #bec8d9;
+  color: #d8efde;
   line-height: 1.65;
   max-width: 56ch;
 }
@@ -720,14 +724,14 @@ h1 em {
 
 .price-amount {
   font-family: "Cormorant Garamond", serif;
-  color: #fff;
+  color: #ffffff;
   font-size: clamp(2.8rem, 8vw, 4rem);
   line-height: 0.9;
   font-weight: 700;
 }
 
 .price-period {
-  color: #9ca8be;
+  color: #b9e0c3;
   font-size: 0.86rem;
 }
 
@@ -737,10 +741,10 @@ h1 em {
 }
 
 .perks li {
-  color: #c9d2e0;
+  color: #ddf4e3;
   line-height: 1.5;
   padding: 0.5rem 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(184, 223, 192, 0.28);
 }
 
 .perks li::before {
@@ -750,21 +754,21 @@ h1 em {
 }
 
 .register-form {
-  background: #182235;
-  border: 1px solid rgba(214, 198, 165, 0.24);
+  background: #15432f;
+  border: 1px solid rgba(184, 223, 192, 0.36);
   border-radius: var(--radius);
   padding: clamp(1rem, 3.2vw, 2rem);
 }
 
 .form-title {
-  color: #fff;
+  color: #ffffff;
   font-family: "Cormorant Garamond", serif;
   font-size: clamp(1.35rem, 3vw, 1.8rem);
   margin-bottom: 0.3rem;
 }
 
 .form-subtitle {
-  color: #aab4c6;
+  color: #cfead7;
   font-size: 0.85rem;
   margin-bottom: 1.2rem;
   line-height: 1.5;
@@ -774,8 +778,8 @@ h1 em {
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
-  background: rgba(243, 228, 200, 0.08);
-  border: 1px solid rgba(243, 228, 200, 0.2);
+  background: rgba(232, 248, 235, 0.12);
+  border: 1px solid rgba(232, 248, 235, 0.24);
   color: var(--clay);
   border-radius: 999px;
   padding: 0.35rem 0.8rem;
@@ -804,7 +808,7 @@ h1 em {
 .form-group label {
   display: block;
   margin-bottom: 0.4rem;
-  color: #afbbce;
+  color: #d7f2de;
   font-size: 0.72rem;
   letter-spacing: 0.09em;
   text-transform: uppercase;
@@ -813,9 +817,9 @@ h1 em {
 .form-group input,
 .form-group select {
   width: 100%;
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  background: #0d1320;
-  color: #f4f7ff;
+  border: 1px solid rgba(184, 223, 192, 0.35);
+  background: #0f3424;
+  color: #f3fff5;
   border-radius: 10px;
   padding: 0.75rem 0.85rem;
   font-family: "Space Grotesk", sans-serif;
@@ -823,7 +827,7 @@ h1 em {
 }
 
 .form-group input::placeholder {
-  color: #74819a;
+  color: #8dbfa0;
 }
 
 .form-group input:focus,
@@ -837,8 +841,8 @@ h1 em {
   width: 100%;
   border: 0;
   border-radius: 10px;
-  background: linear-gradient(120deg, #f6ddb1, #d99f58);
-  color: #2f2213;
+  background: linear-gradient(120deg, #f7a147, #f28c28);
+  color: #402507;
   font-family: "Space Grotesk", sans-serif;
   font-size: 0.82rem;
   font-weight: 700;
@@ -863,7 +867,7 @@ h1 em {
 .form-note {
   margin-top: 0.9rem;
   text-align: center;
-  color: #8e99ab;
+  color: #b9dec2;
   font-size: 0.72rem;
 }
 
@@ -898,7 +902,8 @@ h1 em {
 }
 
 footer {
-  background: #0f141d;
+  background: #0a2b1d;
+  border-top: 1px solid rgba(184, 223, 192, 0.24);
   padding: 1.5rem clamp(1rem, 6vw, 5rem);
   display: flex;
   align-items: center;
@@ -908,7 +913,7 @@ footer {
 }
 
 footer p {
-  color: #7c8698;
+  color: #b6dcbc;
   font-size: 0.75rem;
 }
 
@@ -970,6 +975,10 @@ footer a {
 @media (max-width: 680px) {
   header {
     padding: 0.9rem 0.9rem;
+  }
+
+  .logo img {
+    height: 30px;
   }
 
   .nav-cta {
