@@ -648,6 +648,7 @@ h1 em {
 .who-card-bonus {
   background: linear-gradient(150deg, #11422d 0%, #0f3928 100%);
   border-color: rgba(184, 223, 192, 0.45);
+  grid-column: 1 / -1;
 }
 
 .who-card-bonus h3 {
