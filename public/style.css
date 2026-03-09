@@ -1847,3 +1847,30 @@ footer a {
     padding-right: 0.9rem;
   }
 }
+
+@media (max-width: 390px) {
+  header {
+    padding: 0.8rem 0.75rem;
+    gap: 0.5rem;
+  }
+
+  .logo img {
+    height: 28px;
+  }
+
+  .nav-actions {
+    gap: 0.6rem;
+  }
+
+  .nav-cta {
+    padding: 0.48rem 0.75rem;
+    font-size: 0.7rem;
+    letter-spacing: 0.02em;
+  }
+
+  .nav-ghost {
+    padding: 0.45rem 0.65rem;
+    font-size: 0.65rem;
+    letter-spacing: 0.02em;
+  }
+}
