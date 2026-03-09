@@ -30,7 +30,7 @@
               .scrollIntoView({ behavior: 'smooth' })
           "
         >
-          Reserve My Spot Now
+          Enrol for $50
         </button>
       </div>
     </header>
@@ -38,53 +38,82 @@
     <section class="instructor-panel" id="instructor-panel" aria-hidden="true">
       <div class="instructor-inner">
         <div class="instructor-topbar">
-          <p class="instructor-kicker">Meet Your Instructor</p>
           <button class="instructor-close" onclick="closeInstructorPanel()">
-            Back to class page
+            ← Back to class page
           </button>
         </div>
 
-        <h2 class="instructor-title">
-          Learn From Someone Who Started Exactly Where You Are
-        </h2>
-
-        <div class="instructor-copy">
-          <p>
-            PM Launchpad is taught by
-            <span class="instructor-name">Ogaga Johnson</span>, an award-winning
-            Project Management Executive and educator.
-          </p>
-          <p>
-            Ogaga did not begin her career as a senior project manager. She
-            started as a Project Coordinator intern, learning the fundamentals
-            and building her experience step by step.
-          </p>
-          <p>
-            Today, she has built a successful career in project management
-            spanning three continents: Africa, Europe, and North America.
-          </p>
-          <p>She is now a:</p>
-          <ul>
-            <li>Project Management Executive</li>
-            <li>Speaker and educator</li>
-            <li>
-              Career mentor helping professionals transition into project
-              management, and has helped over 20,000 professionals.
-            </li>
-          </ul>
-          <p>
-            Through her work and her widely followed YouTube channel, Ogaga has
-            helped thousands of professionals gain clarity about careers in
-            project management.
-          </p>
-          <p>
-            PM Launchpad is her way of helping beginners take that first
-            confident step.
-          </p>
-          <p>
-            Because starting a new career path is easier when you do not have to
-            figure it out alone.
-          </p>
+        <div class="instructor-layout">
+          <div class="instructor-image-wrap">
+            <div class="instructor-image-box">
+              <div class="instructor-placeholder-text">OJ</div>
+            </div>
+            <div class="instructor-badge">
+              <span class="big">3</span>
+              Continents.<br />One career journey.
+            </div>
+          </div>
+          <div>
+            <span class="instructor-label">Your instructor</span>
+            <h2 class="instructor-headline">
+              She started as a Project Coordinator Intern.
+            </h2>
+            <p class="instructor-sub">
+              Ogaga Johnson is an award-winning Project Management Executive,
+              speaker, educator, and mentor — and she began her career in the
+              exact same place you're standing now.
+            </p>
+            <p
+              style="
+                font-size: 0.97rem;
+                color: var(--muted);
+                line-height: 1.75;
+                margin-bottom: 32px;
+              "
+            >
+              From her first internship to building a career across Africa,
+              Europe, and North America, Ogaga has lived the full arc of a PM
+              career. She didn't have a perfect starting point. She had clarity,
+              the right foundations, and people who believed in her — and now
+              she's giving you that same foundation.
+            </p>
+            <div class="instructor-credentials">
+              <div class="instructor-cred">
+                <div class="instructor-cred-icon">🏆</div>
+                <div class="instructor-cred-text">
+                  <strong>Award-Winning PM Executive</strong>
+                  Recognised for excellence across the project management
+                  industry.
+                </div>
+              </div>
+              <div class="instructor-cred">
+                <div class="instructor-cred-icon">🌍</div>
+                <div class="instructor-cred-text">
+                  <strong
+                    >Global Career: Africa, Europe &amp; North America</strong
+                  >
+                  Certified PM professional with deep cross-industry,
+                  cross-continental experience.
+                </div>
+              </div>
+              <div class="instructor-cred">
+                <div class="instructor-cred-icon">🎙️</div>
+                <div class="instructor-cred-text">
+                  <strong>Speaker, Educator &amp; Mentor</strong>
+                  Creator of the Ogaga Johnson YouTube channel and a trusted
+                  voice in the PM community.
+                </div>
+              </div>
+              <div class="instructor-cred">
+                <div class="instructor-cred-icon">🚀</div>
+                <div class="instructor-cred-text">
+                  <strong>Founder of Thrive Community</strong>
+                  A private mentorship community helping the next generation
+                  break into PM.
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -99,13 +128,17 @@
         <p class="hero-desc">
           In this 3-hour live masterclass, award-winning Project Management
           Executive,
-          <span class="speaker-name">Ogaga Johnson</span>
+          <span
+            class="speaker-name clickable-name"
+            onclick="openInstructorPanel()"
+            >Ogaga Johnson</span
+          >
           will walk you through the foundations of project management, the
           skills it requires, and how people from different backgrounds break
           into the field.
         </p>
         <div class="hero-actions">
-          <a href="#register" class="btn-primary">Reserve My Spot Now</a>
+          <a href="#register" class="btn-primary">Enrol for $50</a>
         </div>
       </div>
 
@@ -117,6 +150,48 @@
             of <span id="total-seats"><%= seats.total %></span> total
           </p>
         </div>
+      </div>
+    </section>
+
+    <section class="career-ladder">
+      <div class="career-ladder-head">
+        <p class="career-ladder-kicker">The PM Career Ladder</p>
+        <h2>Where you start &mdash; and how far you can go.</h2>
+      </div>
+
+      <div class="career-ladder-track" aria-label="PM career ladder path">
+        <article class="career-step career-step-current">
+          <h3>You &mdash; Right Now</h3>
+          <p>Curious Beginner</p>
+        </article>
+
+        <span class="career-step-arrow" aria-hidden="true">&rarr;</span>
+
+        <article class="career-step">
+          <h3>PM Intern / Coordinator</h3>
+          <p>Entry Point</p>
+        </article>
+
+        <span class="career-step-arrow" aria-hidden="true">&rarr;</span>
+
+        <article class="career-step">
+          <h3>Project Manager</h3>
+          <p>Mid-Level</p>
+        </article>
+
+        <span class="career-step-arrow" aria-hidden="true">&rarr;</span>
+
+        <article class="career-step">
+          <h3>Senior PM</h3>
+          <p>Senior Level</p>
+        </article>
+
+        <span class="career-step-arrow" aria-hidden="true">&rarr;</span>
+
+        <article class="career-step career-step-executive">
+          <h3>PM Executive</h3>
+          <p>Ogaga's Journey</p>
+        </article>
       </div>
     </section>
 
@@ -164,7 +239,7 @@
         <article class="card card-accent">
           <h3>Questions This Masterclass Clears Up</h3>
           <ul>
-            <li>Where do you even start?</li>
+            <li>Where do I even start?</li>
             <li>Do you need technical skills?</li>
             <li>Do you need a certification first?</li>
             <li>Do companies even hire beginners?</li>
@@ -177,7 +252,7 @@
       <div class="launchpad-intro">
         <p>
           They jump straight into certifications, tools, and complex frameworks
-          without first understanding the big picture.
+          without first understanding the foundation.
         </p>
         <p>
           What Project Management actually is. How projects really work. And how
@@ -192,8 +267,7 @@
         <h2>PM Launchpad: Your First Step into Project Management</h2>
         <p class="launchpad-sub">
           PM Launchpad is a 3-hour Introductory Masterclass designed for people
-          like you who want to understand project management before committing
-          to certifications or full training programs.
+          like you who want to understand project management
         </p>
 
         <div class="launchpad-grid">
@@ -225,23 +299,122 @@
               While most introductions to project management stop at
               explanations, PM Launchpad goes a step further.
             </p>
-            <p>
-              During the session, you will participate in a simulated project
-              exercise where you will practice thinking like a project manager.
-            </p>
+
+            <details class="simulation-dropdown">
+              <summary class="simulation-trigger">
+                <span class="trigger-text"
+                  >During the session, you will participate in a simulated
+                  project exercise where you will practice thinking like a
+                  project manager.</span
+                >
+                <span class="dropdown-indicator">▼</span>
+              </summary>
+              <div class="simulation-content">
+                <p
+                  style="margin-bottom: 1rem; color: #f3fff5; font-weight: 500"
+                >
+                  You will learn how to:
+                </p>
+                <ul
+                  style="
+                    list-style: none;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.6rem;
+                  "
+                >
+                  <li
+                    style="
+                      color: #e3f8e8;
+                      display: flex;
+                      gap: 0.7rem;
+                      align-items: flex-start;
+                    "
+                  >
+                    <span
+                      style="color: #f7a147; font-weight: 700; flex-shrink: 0"
+                      >✓</span
+                    >
+                    <span>Initiate and set-up a project for success</span>
+                  </li>
+                  <li
+                    style="
+                      color: #e3f8e8;
+                      display: flex;
+                      gap: 0.7rem;
+                      align-items: flex-start;
+                    "
+                  >
+                    <span
+                      style="color: #f7a147; font-weight: 700; flex-shrink: 0"
+                      >✓</span
+                    >
+                    <span>Identify key stakeholders</span>
+                  </li>
+                  <li
+                    style="
+                      color: #e3f8e8;
+                      display: flex;
+                      gap: 0.7rem;
+                      align-items: flex-start;
+                    "
+                  >
+                    <span
+                      style="color: #f7a147; font-weight: 700; flex-shrink: 0"
+                      >✓</span
+                    >
+                    <span>Outline project scope</span>
+                  </li>
+                  <li
+                    style="
+                      color: #e3f8e8;
+                      display: flex;
+                      gap: 0.7rem;
+                      align-items: flex-start;
+                    "
+                  >
+                    <span
+                      style="color: #f7a147; font-weight: 700; flex-shrink: 0"
+                      >✓</span
+                    >
+                    <span>Break work into manageable steps</span>
+                  </li>
+                  <li
+                    style="
+                      color: #e3f8e8;
+                      display: flex;
+                      gap: 0.7rem;
+                      align-items: flex-start;
+                    "
+                  >
+                    <span
+                      style="color: #f7a147; font-weight: 700; flex-shrink: 0"
+                      >✓</span
+                    >
+                    <span>Create a project budget</span>
+                  </li>
+                  <li
+                    style="
+                      color: #e3f8e8;
+                      display: flex;
+                      gap: 0.7rem;
+                      align-items: flex-start;
+                    "
+                  >
+                    <span
+                      style="color: #f7a147; font-weight: 700; flex-shrink: 0"
+                      >✓</span
+                    >
+                    <span>Identify potential risks</span>
+                  </li>
+                </ul>
+              </div>
+            </details>
+
             <p>
               By the end of the class, you won't just understand project
               management conceptually, you'll have experienced how it works.
             </p>
-
-            <h3>You will learn how to:</h3>
-            <ul>
-              <li>Define a project objective</li>
-              <li>Identify key stakeholders</li>
-              <li>Outline project scope</li>
-              <li>Break work into manageable steps</li>
-              <li>Identify potential risks</li>
-            </ul>
           </article>
         </div>
       </div>
@@ -291,7 +464,11 @@
           <p>
             It gets more interesting here. Every participant also gets 1 month
             of access to a private mentorship community with
-            <span class="instructor-name">Ogaga Johnson</span>
+            <span
+              class="instructor-name clickable-name"
+              onclick="openInstructorPanel()"
+              >Ogaga Johnson</span
+            >
             (the Thrive Tribe Community), that gives you:
           </p>
           <ul class="who-list">
@@ -360,7 +537,7 @@
         </div>
 
         <button id="register-btn" onclick="handleRegister()">
-          Reserve My Spot Now — $50 CAD
+          Enrol Now — $50 CAD
         </button>
 
         <div class="error-banner" id="error-banner"></div>
