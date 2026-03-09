@@ -1002,27 +1002,29 @@ h1 em {
   .toggle-icon {
     display: block;
   }
-  
+
   .launchpad-toggle {
     cursor: pointer;
   }
-  
+
   .launchpad-toggle:hover {
     opacity: 0.85;
   }
-  
+
   .launchpad-content {
     overflow: hidden;
     max-height: 1000px;
     opacity: 1;
-    transition: max-height 0.4s ease, opacity 0.3s ease;
+    transition:
+      max-height 0.4s ease,
+      opacity 0.3s ease;
   }
-  
+
   .launchpad-collapsible.collapsed .launchpad-content {
     max-height: 0;
     opacity: 0;
   }
-  
+
   .launchpad-collapsible:not(.collapsed) .toggle-icon {
     transform: rotate(45deg);
   }
