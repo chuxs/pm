@@ -19,7 +19,7 @@
         <img src="/Verisult_LOGO.png" alt="Verisult logo" />
       </a>
       <div class="nav-actions">
-        <button class="nav-ghost" onclick="openInstructorPanel()">
+        <button class="nav-ghost" onclick="document.getElementById('instructor-preview').scrollIntoView({ behavior: 'smooth' })">
           Meet your instructor
         </button>
         <button
@@ -130,7 +130,7 @@
           Executive,
           <span
             class="speaker-name clickable-name"
-            onclick="openInstructorPanel()"
+            onclick="document.getElementById('instructor-preview').scrollIntoView({ behavior: 'smooth' })"
             >Ogaga Johnson</span
           >
           will walk you through the foundations of project management, the
@@ -195,7 +195,7 @@
       </div>
     </section>
 
-    <section class="instructor-preview">
+    <section class="instructor-preview" id="instructor-preview">
       <div class="instructor-preview-content">
         <div class="preview-left">
           <div class="preview-avatar">OJ</div>
@@ -208,7 +208,7 @@
             Coordinator Intern. Now mentoring the next generation of PMs across
             3 continents.
           </p>
-          <button class="preview-cta" onclick="openInstructorPanel()">
+          <button class="preview-cta" onclick="document.getElementById('instructor-panel').classList.add('show'); document.getElementById('instructor-panel').setAttribute('aria-hidden', 'false'); document.body.classList.add('instructor-open');">
             Read Full Bio →
           </button>
         </div>
@@ -486,7 +486,7 @@
             of access to a private mentorship community with
             <span
               class="instructor-name clickable-name"
-              onclick="openInstructorPanel()"
+              onclick="document.getElementById('instructor-preview').scrollIntoView({ behavior: 'smooth' })"
               >Ogaga Johnson</span
             >
             (the Thrive Tribe Community), that gives you:
