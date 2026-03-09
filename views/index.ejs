@@ -308,36 +308,45 @@
         </p>
 
         <div class="launchpad-grid">
-          <article class="launchpad-card">
-            <h3>In this masterclass, you will learn:</h3>
-            <ul>
-              <li>What project management really is and why it matters</li>
-              <li>The 5 phases of the project lifecycle</li>
-              <li>
-                The difference between Agile, Waterfall, and Hybrid project
-                approaches
-              </li>
-              <li>The key tools project managers use to organise work</li>
-              <li>How projects are planned, executed, and delivered</li>
-              <li>
-                How people from different backgrounds transition into project
-                management
-              </li>
-            </ul>
+          <article class="launchpad-card launchpad-collapsible collapsed">
+            <button class="launchpad-toggle" aria-expanded="false">
+              <h3>In this masterclass, you will learn:</h3>
+              <span class="toggle-icon">+</span>
+            </button>
+            <div class="launchpad-content">
+              <ul>
+                <li>What project management really is and why it matters</li>
+                <li>The 5 phases of the project lifecycle</li>
+                <li>
+                  The difference between Agile, Waterfall, and Hybrid project
+                  approaches
+                </li>
+                <li>The key tools project managers use to organise work</li>
+                <li>How projects are planned, executed, and delivered</li>
+                <li>
+                  How people from different backgrounds transition into project
+                  management
+                </li>
+              </ul>
+            </div>
           </article>
 
-          <article class="launchpad-card launchpad-card-accent">
-            <p class="launchpad-note">This is not a theory-heavy lecture.</p>
-            <p>
-              It is a structured introduction designed to give you the clarity
-              most people spend months trying to piece together.
-            </p>
-            <p>
-              While most introductions to project management stop at
-              explanations, PM Launchpad goes a step further.
-            </p>
+          <article class="launchpad-card launchpad-card-accent launchpad-collapsible collapsed">
+            <button class="launchpad-toggle launchpad-toggle-accent" aria-expanded="false">
+              <p class="launchpad-note">This is not a theory-heavy lecture.</p>
+              <span class="toggle-icon">+</span>
+            </button>
+            <div class="launchpad-content">
+              <p>
+                It is a structured introduction designed to give you the clarity
+                most people spend months trying to piece together.
+              </p>
+              <p>
+                While most introductions to project management stop at
+                explanations, PM Launchpad goes a step further.
+              </p>
 
-            <details class="simulation-dropdown">
+              <details class="simulation-dropdown">
               <summary class="simulation-trigger">
                 <span class="trigger-text"
                   >During the session, you will participate in a simulated
@@ -452,6 +461,7 @@
               By the end of the class, you won't just understand project
               management conceptually, you'll have experienced how it works.
             </p>
+            </div>
           </article>
         </div>
       </div>
@@ -627,6 +637,19 @@
         } else {
           scrollBtn.classList.remove("show");
         }
+      });
+
+      // Launchpad card toggle for mobile
+      const launchpadToggles = document.querySelectorAll(".launchpad-toggle");
+      launchpadToggles.forEach((toggle) => {
+        toggle.addEventListener("click", () => {
+          // Only toggle on mobile (768px and below)
+          if (window.innerWidth <= 768) {
+            const card = toggle.closest(".launchpad-collapsible");
+            const isCollapsed = card.classList.toggle("collapsed");
+            toggle.setAttribute("aria-expanded", !isCollapsed);
+          }
+        });
       });
 
       // Keep mini pill in sync with available seats
