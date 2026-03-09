@@ -20,16 +20,6 @@
       </a>
       <div class="nav-actions">
         <button
-          class="nav-ghost"
-          onclick="
-            document
-              .getElementById('instructor-preview')
-              .scrollIntoView({ behavior: 'smooth' })
-          "
-        >
-          Meet your instructor
-        </button>
-        <button
           class="nav-cta"
           onclick="
             document
@@ -38,6 +28,16 @@
           "
         >
           Enrol for $50
+        </button>
+        <button
+          class="nav-ghost"
+          onclick="
+            document
+              .querySelector('.story')
+              .scrollIntoView({ behavior: 'smooth' })
+          "
+        >
+          Get more info
         </button>
       </div>
     </header>
