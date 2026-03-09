@@ -598,6 +598,10 @@
       </p>
     </footer>
 
+    <button id="scroll-to-top" class="scroll-to-top" onclick="scrollToTop()" aria-label="Scroll to top">
+      ↑
+    </button>
+
     <script>
       function openInstructorPanel() {
         const panel = document.getElementById("instructor-panel");
@@ -612,6 +616,20 @@
         panel.setAttribute("aria-hidden", "true");
         document.body.classList.remove("instructor-open");
       }
+
+      function scrollToTop() {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+
+      // Show/hide scroll-to-top button
+      window.addEventListener("scroll", () => {
+        const scrollBtn = document.getElementById("scroll-to-top");
+        if (window.scrollY > 300) {
+          scrollBtn.classList.add("show");
+        } else {
+          scrollBtn.classList.remove("show");
+        }
+      });
 
       // Keep mini pill in sync with available seats
       function updateFormSeatDisplay() {
