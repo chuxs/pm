@@ -586,8 +586,8 @@ h1 em {
 
 .details-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
   align-items: start;
 }
 
@@ -595,13 +595,13 @@ h1 em {
   background: rgba(255, 255, 255, 0.85);
   border: 2px solid var(--line);
   border-radius: var(--radius);
-  padding: clamp(1.2rem, 3vw, 1.8rem);
+  padding: 1rem 1.2rem;
   transition:
     transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
     box-shadow 0.4s ease,
     border-color 0.4s ease;
   animation: fadeInUp 0.8s ease-out forwards;
-  min-height: 280px;
+  height: 300px;
   display: flex;
   flex-direction: column;
 }
@@ -615,19 +615,19 @@ h1 em {
 .details-card h3 {
   font-family: "Cormorant Garamond", serif;
   color: var(--ink);
-  font-size: clamp(1.45rem, 3.2vw, 1.8rem);
-  margin-bottom: 1rem;
+  font-size: 1.15rem;
+  margin-bottom: 0.6rem;
   line-height: 1.15;
 }
 
 .details-card p {
   color: #26402f;
-  line-height: 1.7;
-  font-size: clamp(0.93rem, 1.8vw, 1rem);
+  line-height: 1.5;
+  font-size: 0.8rem;
 }
 
 .details-card p + p {
-  margin-top: 0.8rem;
+  margin-top: 0.55rem;
 }
 
 .details-list {
@@ -637,8 +637,8 @@ h1 em {
 }
 
 .details-list li {
-  padding: 0.5rem 0;
-  font-size: clamp(0.93rem, 1.8vw, 1rem);
+  padding: 0.3rem 0;
+  font-size: 0.8rem;
 }
 
 .details-list li::before {
@@ -650,14 +650,55 @@ h1 em {
 
 .details-card:nth-child(1) {
   animation-delay: 0.1s;
+  background: rgba(230, 255, 240, 0.85);
+  border-color: #a8dfc0;
 }
 
 .details-card:nth-child(2) {
   animation-delay: 0.2s;
+  background: rgba(240, 255, 235, 0.85);
+  border-color: #b8dfc0;
 }
 
 .details-card:nth-child(3) {
   animation-delay: 0.3s;
+  background: rgba(235, 250, 245, 0.85);
+  border-color: #c0e8d0;
+}
+
+.details-card:nth-child(4) {
+  animation-delay: 0.4s;
+  background: rgba(245, 255, 250, 0.85);
+  border-color: #bee8c7;
+}
+
+.details-card-highlight p {
+  line-height: 1.5;
+  margin-bottom: 0.55rem;
+}
+
+.details-card-highlight p:first-of-type {
+  font-size: 0.8rem;
+}
+
+.details-card-highlight p:nth-of-type(2) {
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.details-card-highlight p:last-of-type {
+  font-size: 0.8rem;
+  margin-bottom: 0;
+}
+
+.details-card-highlight strong {
+  color: var(--rust);
+  font-weight: 600;
+}
+
+.details-card-highlight em {
+  font-style: italic;
+  color: var(--rust);
 }
 
 .launchpad {
@@ -927,8 +968,8 @@ h1 em {
 
 .who-cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
   align-items: start;
 }
 
@@ -936,12 +977,15 @@ h1 em {
   background: rgba(255, 255, 255, 0.85);
   border: 2px solid var(--line);
   border-radius: var(--radius);
-  padding: clamp(1.2rem, 3vw, 1.8rem);
+  padding: 1rem 1.2rem;
   transition:
     transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
     box-shadow 0.4s ease,
     border-color 0.4s ease;
   animation: fadeInUp 0.8s ease-out forwards;
+  height: 300px;
+  display: flex;
+  flex-direction: column;
 }
 
 .who-card:hover {
@@ -953,19 +997,19 @@ h1 em {
 .who-card-label {
   color: var(--rust);
   font-weight: 700;
-  font-size: clamp(0.95rem, 2vw, 1.05rem);
-  margin-bottom: 0.8rem;
+  font-size: 0.85rem;
+  margin-bottom: 0.6rem;
 }
 
 .who-list {
   list-style: none;
   color: #26402f;
-  line-height: 1.7;
+  line-height: 1.5;
 }
 
 .who-list li {
-  padding: 0.5rem 0;
-  font-size: clamp(0.93rem, 1.8vw, 1rem);
+  padding: 0.3rem 0;
+  font-size: 0.8rem;
 }
 
 .who-list li::before {
@@ -979,15 +1023,17 @@ h1 em {
   background: linear-gradient(150deg, #ffffff 0%, #f7fff8 100%);
   border-color: var(--clay);
   border-width: 2px;
+  height: 300px;
 }
 
 .who-card-highlight p {
   color: var(--ink);
-  line-height: 1.75;
+  line-height: 1.6;
+  font-size: 0.8rem;
 }
 
 .who-card-highlight p + p {
-  margin-top: 0.8rem;
+  margin-top: 0.55rem;
 }
 
 .who-card-highlight em {
@@ -1000,37 +1046,60 @@ h1 em {
   background: linear-gradient(150deg, #11422d 0%, #0f3928 100%);
   border-color: rgba(184, 223, 192, 0.45);
   grid-column: 1 / -1;
+  height: auto;
 }
 
 .who-card-bonus h3 {
   color: #f7a147;
   font-family: "Cormorant Garamond", serif;
-  font-size: clamp(1.45rem, 3.2vw, 1.8rem);
-  margin-bottom: 0.8rem;
+  font-size: 1.15rem;
+  margin-bottom: 0.6rem;
   letter-spacing: 0.05em;
 }
 
 .who-card-bonus p {
   color: #e7faec;
-  line-height: 1.75;
+  line-height: 1.5;
+  font-size: 0.8rem;
 }
 
 .who-card-bonus p + .who-list {
-  margin-top: 0.8rem;
+  margin-top: 0.6rem;
 }
 
 .who-card-bonus .who-list {
   color: #d5f2dd;
+  line-height: 1.5;
 }
 
 .who-card-bonus .who-list li::before {
   color: #f7a147;
 }
 
+.who-card-bonus .who-list li {
+  font-size: 0.8rem;
+}
+
 .who-final {
   margin-top: 1rem;
   color: #f7a147;
   font-weight: 700;
+  font-size: 0.8rem;
+}
+
+.who-card:nth-child(1) {
+  background: rgba(230, 255, 240, 0.85);
+  border-color: #a8dfc0;
+}
+
+.who-card:nth-child(2) {
+  background: rgba(240, 255, 235, 0.85);
+  border-color: #b8dfc0;
+}
+
+.who-card:nth-child(3) {
+  background: rgba(235, 250, 245, 0.85);
+  border-color: #c0e8d0;
 }
 
 .career-ladder {
@@ -1595,10 +1664,6 @@ footer a {
 
   .career-step {
     min-height: 94px;
-  }
-
-  .launchpad-intro {
-    display: none;
   }
 
   .who-cards > .who-card:nth-child(3) {
