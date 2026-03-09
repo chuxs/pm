@@ -150,20 +150,25 @@ header {
   inset: 0;
   z-index: 120;
   background: #e8f8eb;
-  transform: translateX(100%);
+  transform: translate3d(108%, 0, 0);
   opacity: 0;
+  filter: blur(1.5px);
   visibility: hidden;
+  pointer-events: none;
+  will-change: transform, opacity;
   transition:
-    transform 0.55s cubic-bezier(0.23, 1, 0.32, 1),
-    opacity 0.35s ease,
-    visibility 0.35s ease;
+    transform 2.6s cubic-bezier(0.22, 0.7, 0.2, 1),
+    opacity 1.4s ease,
+    filter 1.4s ease;
   overflow-y: auto;
 }
 
 .instructor-panel.show {
-  transform: translateX(0);
+  transform: translate3d(0, 0, 0);
   opacity: 1;
+  filter: blur(0);
   visibility: visible;
+  pointer-events: auto;
 }
 
 body.instructor-open {
@@ -959,77 +964,88 @@ h1 em {
 }
 
 .who-title {
-  font-family: "Poppins", sans-serif;
+  font-family: "Cormorant Garamond", serif;
   color: var(--ink);
-  font-size: clamp(1.9rem, 4.8vw, 3rem);
-  line-height: 0.98;
-  margin-bottom: 2rem;
+  font-size: clamp(2rem, 5vw, 3.15rem);
+  line-height: 1.1;
+  margin-bottom: 1.2rem;
 }
 
 .who-cards {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1rem;
+  margin-top: 2.2rem;
   align-items: start;
 }
 
 .who-card {
-  background: rgba(255, 255, 255, 0.85);
-  border: 2px solid var(--line);
+  position: relative;
+  background: #fff;
+  border: 1px dotted rgba(242, 140, 40, 0.72);
   border-radius: var(--radius);
-  padding: 1rem 1.2rem;
+  padding: 1.4rem 1.7rem 1.4rem 3.2rem;
   transition:
-    transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
-    box-shadow 0.4s ease,
-    border-color 0.4s ease;
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
   animation: fadeInUp 0.8s ease-out forwards;
-  height: 300px;
+  min-height: 225px;
   display: flex;
   flex-direction: column;
 }
 
 .who-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 14px 36px rgba(20, 112, 58, 0.18);
-  border-color: rgba(18, 164, 85, 0.5);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.07);
+}
+
+.who-cards > .who-card::before {
+  content: '"';
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  font-family: "Cormorant Garamond", serif;
+  font-size: 2.6rem;
+  line-height: 0.85;
+  color: #f28c28;
+  opacity: 0.45;
 }
 
 .who-card-label {
-  color: var(--rust);
-  font-weight: 700;
-  font-size: 0.85rem;
-  margin-bottom: 0.6rem;
+  color: #2b4333;
+  font-weight: 500;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 0.55rem;
+  font-style: italic;
 }
 
 .who-list {
   list-style: none;
-  color: #26402f;
-  line-height: 1.5;
+  color: #2b4333;
+  line-height: 1.6;
 }
 
 .who-list li {
-  padding: 0.3rem 0;
-  font-size: 0.8rem;
+  padding: 0.25rem 0;
+  font-size: 0.95rem;
+  font-style: italic;
 }
 
 .who-list li::before {
-  content: "→";
-  color: var(--rust);
-  margin-right: 0.6rem;
-  font-weight: 700;
+  content: none;
 }
 
 .who-card-highlight {
-  background: linear-gradient(150deg, #ffffff 0%, #f7fff8 100%);
-  border-color: var(--clay);
-  border-width: 2px;
-  height: 300px;
+  background: #fff;
+  border: 1px dotted rgba(184, 223, 192, 0.85);
 }
 
 .who-card-highlight p {
-  color: var(--ink);
+  color: #2b4333;
   line-height: 1.6;
-  font-size: 0.8rem;
+  font-size: 0.95rem;
+  font-style: italic;
 }
 
 .who-card-highlight p + p {
@@ -1043,24 +1059,25 @@ h1 em {
 }
 
 .who-card-bonus {
-  background: linear-gradient(150deg, #11422d 0%, #0f3928 100%);
-  border-color: rgba(184, 223, 192, 0.45);
-  grid-column: 1 / -1;
-  height: auto;
+  background: #fff;
+  border: 1px dotted rgba(184, 223, 192, 0.85);
+  grid-column: auto;
+  min-height: 225px;
 }
 
 .who-card-bonus h3 {
-  color: #f7a147;
+  color: #f28c28;
   font-family: "Cormorant Garamond", serif;
-  font-size: 1.15rem;
+  font-size: 1.05rem;
   margin-bottom: 0.6rem;
   letter-spacing: 0.05em;
 }
 
 .who-card-bonus p {
-  color: #e7faec;
-  line-height: 1.5;
-  font-size: 0.8rem;
+  color: #2b4333;
+  line-height: 1.6;
+  font-size: 0.95rem;
+  font-style: italic;
 }
 
 .who-card-bonus p + .who-list {
@@ -1068,38 +1085,24 @@ h1 em {
 }
 
 .who-card-bonus .who-list {
-  color: #d5f2dd;
+  color: #2b4333;
   line-height: 1.5;
 }
 
 .who-card-bonus .who-list li::before {
-  color: #f7a147;
+  content: none;
 }
 
 .who-card-bonus .who-list li {
-  font-size: 0.8rem;
+  font-size: 0.95rem;
 }
 
 .who-final {
   margin-top: 1rem;
-  color: #f7a147;
-  font-weight: 700;
-  font-size: 0.8rem;
-}
-
-.who-card:nth-child(1) {
-  background: rgba(230, 255, 240, 0.85);
-  border-color: #a8dfc0;
-}
-
-.who-card:nth-child(2) {
-  background: rgba(240, 255, 235, 0.85);
-  border-color: #b8dfc0;
-}
-
-.who-card:nth-child(3) {
-  background: rgba(235, 250, 245, 0.85);
-  border-color: #c0e8d0;
+  color: #2b4333;
+  font-weight: 600;
+  font-size: 0.95rem;
+  font-style: italic;
 }
 
 .career-ladder {
@@ -1666,8 +1669,8 @@ footer a {
     min-height: 94px;
   }
 
-  .who-cards > .who-card:nth-child(3) {
-    display: none;
+  .who-cards {
+    grid-template-columns: 1fr;
   }
 
   .form-row {
