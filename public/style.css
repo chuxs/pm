@@ -499,7 +499,11 @@ h1 em {
 }
 
 .hero-right {
-  background: linear-gradient(180deg, #0f3928, #145238);
+  background: var(--ink);
+  background-image:
+    linear-gradient(rgba(242, 140, 40, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(242, 140, 40, 0.08) 1px, transparent 1px);
+  background-size: 60px 60px;
   border: 1px solid rgba(184, 223, 192, 0.35);
   border-radius: var(--radius);
   min-height: clamp(250px, 34vw, 380px);
@@ -511,18 +515,28 @@ h1 em {
   animation: rise 0.65s 0.15s ease both;
 }
 
-.hero-right::after {
-  content: "";
+.hero-right::before {
+  content: '';
   position: absolute;
-  inset: auto -35% -40% auto;
-  width: 300px;
-  height: 300px;
-  border-radius: 50%;
-  background: radial-gradient(
-    circle,
-    rgba(242, 140, 40, 0.22),
-    transparent 70%
-  );
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(184, 223, 192, 0.2) 0%, transparent 70%);
+  top: -150px;
+  right: -100px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.hero-right::after {
+  content: '';
+  position: absolute;
+  width: 350px;
+  height: 350px;
+  background: radial-gradient(circle, rgba(242, 140, 40, 0.1) 0%, transparent 70%);
+  bottom: -50px;
+  left: -100px;
+  pointer-events: none;
+  z-index: 0;
 }
 
 .seat-card {
@@ -533,6 +547,8 @@ h1 em {
 }
 
 .seat-label {
+  position: relative;
+  z-index: 1;
   color: #c8e8d0;
   font-size: 0.84rem;
   text-transform: uppercase;
@@ -541,6 +557,8 @@ h1 em {
 }
 
 .seat-number {
+  position: relative;
+  z-index: 1;
   font-family: "Playfair Display", serif;
   font-size: clamp(3.5rem, 10vw, 5.2rem);
   line-height: 0.9;
@@ -550,6 +568,8 @@ h1 em {
 }
 
 .seat-sub {
+  position: relative;
+  z-index: 1;
   margin-top: 0.3rem;
   color: #d3eed9;
   font-size: 0.88rem;
@@ -598,7 +618,7 @@ h1 em {
 
 .details-card {
   background: rgba(255, 255, 255, 0.85);
-  border: 2px solid var(--line);
+  border: 2px dashed var(--line);
   border-radius: var(--radius);
   padding: 1rem 1.2rem;
   transition:
@@ -615,6 +635,7 @@ h1 em {
   transform: translateY(-6px);
   box-shadow: 0 14px 36px rgba(20, 112, 58, 0.18);
   border-color: rgba(18, 164, 85, 0.5);
+  border-style: dashed;
 }
 
 .details-card h3 {
@@ -774,13 +795,45 @@ h1 em {
 
 .launchpad-panel {
   margin-top: 1rem;
-  background: linear-gradient(160deg, #0f3928, #145238 70%, #0f3122);
+  position: relative;
+  overflow: hidden;
+  background: var(--ink);
+  background-image:
+    linear-gradient(rgba(242, 140, 40, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(242, 140, 40, 0.08) 1px, transparent 1px);
+  background-size: 60px 60px;
   border: 1px solid rgba(184, 223, 192, 0.36);
   border-radius: var(--radius);
   padding: clamp(1.2rem, 3.2vw, 2rem);
 }
 
+.launchpad-panel::before {
+  content: '';
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(184, 223, 192, 0.22) 0%, transparent 70%);
+  top: -100px;
+  right: -100px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.launchpad-panel::after {
+  content: '';
+  position: absolute;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(242, 140, 40, 0.12) 0%, transparent 70%);
+  bottom: 0;
+  left: -50px;
+  pointer-events: none;
+  z-index: 0;
+}
+
 .launchpad-panel h2 {
+  position: relative;
+  z-index: 1;
   font-family: "Poppins", sans-serif;
   color: #ffffff;
   font-size: clamp(1.9rem, 4.8vw, 3rem);
@@ -788,6 +841,8 @@ h1 em {
 }
 
 .launchpad-sub {
+  position: relative;
+  z-index: 1;
   margin-top: 0.75rem;
   color: #d5efdc;
   max-width: 72ch;
@@ -795,6 +850,8 @@ h1 em {
 }
 
 .launchpad-grid {
+  position: relative;
+  z-index: 1;
   margin-top: 1rem;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -802,6 +859,8 @@ h1 em {
 }
 
 .launchpad-card {
+  position: relative;
+  z-index: 1;
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.07);
   border: 1px solid rgba(184, 223, 192, 0.2);
@@ -1208,6 +1267,10 @@ h1 em {
   .career-step-arrow {
     display: none;
   }
+
+  .details-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 /* ── Instructor Preview ────────────────────────────────────────────── */
@@ -1605,6 +1668,10 @@ footer a {
   #register {
     grid-template-columns: 1fr;
   }
+
+  .details-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 @media (max-width: 768px) {
@@ -1620,6 +1687,17 @@ footer a {
   .instructor-badge {
     bottom: 12px;
     right: 12px;
+  }
+
+  .details-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.9rem;
+  }
+
+  .details-card {
+    height: auto;
+    min-height: 200px;
+    padding: 1rem 1.1rem;
   }
 }
 
@@ -1671,6 +1749,17 @@ footer a {
 
   .who-cards {
     grid-template-columns: 1fr;
+  }
+
+  .details-grid {
+    grid-template-columns: 1fr;
+    gap: 0.8rem;
+  }
+
+  .details-card {
+    height: auto;
+    min-height: 180px;
+    padding: 0.9rem 1rem;
   }
 
   .form-row {
