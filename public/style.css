@@ -589,16 +589,36 @@ h1 em {
 }
 
 .story-wrap {
-  background: rgba(255, 255, 255, 0.86);
-  border: 1px solid rgba(184, 223, 192, 0.85);
+  position: relative;
+  background: #ffffff;
+  border: 1px dotted rgba(184, 223, 192, 0.85);
   border-radius: var(--radius);
-  padding: clamp(1.2rem, 3vw, 2rem);
+  padding: 1.4rem 1.7rem 1.4rem 3.2rem;
   line-height: 1.72;
+  box-shadow: 0 4px 16px rgba(242, 140, 40, 0.12);
+  transition: box-shadow 0.3s ease;
+}
+
+.story-wrap:hover {
+  box-shadow: 0 6px 20px rgba(242, 140, 40, 0.16);
+}
+
+.story-wrap::before {
+  content: '"';
+  position: absolute;
+  top: 1.2rem;
+  left: 1rem;
+  font-family: "Cormorant Garamond", serif;
+  font-size: 2.6rem;
+  line-height: 1;
+  color: var(--rust);
+  opacity: 0.45;
 }
 
 .story-wrap p {
   color: #26402f;
   font-size: clamp(0.95rem, 1.8vw, 1.05rem);
+  font-style: italic;
 }
 
 .story-wrap p + p {
@@ -606,7 +626,7 @@ h1 em {
 }
 
 .story-lead {
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .details-title {
@@ -1815,6 +1835,16 @@ footer a {
 
   .who-cards {
     grid-template-columns: 1fr;
+  }
+
+  .story-wrap {
+    padding: 1.2rem 1rem 1.2rem 2.5rem;
+  }
+
+  .story-wrap::before {
+    font-size: 2.2rem;
+    left: 0.7rem;
+    top: 1rem;
   }
 
   .instructor-badge {
