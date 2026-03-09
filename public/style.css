@@ -516,11 +516,15 @@ h1 em {
 }
 
 .hero-right::before {
-  content: '';
+  content: "";
   position: absolute;
   width: 500px;
   height: 500px;
-  background: radial-gradient(circle, rgba(184, 223, 192, 0.2) 0%, transparent 70%);
+  background: radial-gradient(
+    circle,
+    rgba(184, 223, 192, 0.2) 0%,
+    transparent 70%
+  );
   top: -150px;
   right: -100px;
   pointer-events: none;
@@ -528,11 +532,15 @@ h1 em {
 }
 
 .hero-right::after {
-  content: '';
+  content: "";
   position: absolute;
   width: 350px;
   height: 350px;
-  background: radial-gradient(circle, rgba(242, 140, 40, 0.1) 0%, transparent 70%);
+  background: radial-gradient(
+    circle,
+    rgba(242, 140, 40, 0.1) 0%,
+    transparent 70%
+  );
   bottom: -50px;
   left: -100px;
   pointer-events: none;
@@ -808,11 +816,15 @@ h1 em {
 }
 
 .launchpad-panel::before {
-  content: '';
+  content: "";
   position: absolute;
   width: 600px;
   height: 600px;
-  background: radial-gradient(circle, rgba(184, 223, 192, 0.22) 0%, transparent 70%);
+  background: radial-gradient(
+    circle,
+    rgba(184, 223, 192, 0.22) 0%,
+    transparent 70%
+  );
   top: -100px;
   right: -100px;
   pointer-events: none;
@@ -820,11 +832,15 @@ h1 em {
 }
 
 .launchpad-panel::after {
-  content: '';
+  content: "";
   position: absolute;
   width: 400px;
   height: 400px;
-  background: radial-gradient(circle, rgba(242, 140, 40, 0.12) 0%, transparent 70%);
+  background: radial-gradient(
+    circle,
+    rgba(242, 140, 40, 0.12) 0%,
+    transparent 70%
+  );
   bottom: 0;
   left: -50px;
   pointer-events: none;
