@@ -404,6 +404,51 @@ body.instructor-open {
   font-family: "Poppins", sans-serif;
 }
 
+.instructor-copy-poppins .instructor-sub,
+.instructor-copy-poppins p {
+  font-weight: 400;
+}
+
+.nav-cta,
+.nav-ghost,
+.instructor-close,
+.instructor-label,
+.eyebrow,
+.seat-label,
+.seat-sub,
+.career-ladder-kicker,
+.career-step p,
+.preview-label,
+.preview-desc,
+.details-card p,
+.details-list li,
+.launchpad-sub,
+.launchpad-note,
+.launchpad-card p,
+.launchpad-card li,
+.simulation-trigger,
+.simulation-trigger .dropdown-indicator,
+.who-card-label,
+.who-list li,
+.who-card-highlight p,
+.who-card-bonus p,
+.who-final,
+.price-period,
+.perks li,
+.form-subtitle,
+.mini-seat-pill,
+.form-group label,
+.form-group input,
+.form-group select,
+#register-btn,
+.form-note,
+.success-banner,
+.error-banner,
+footer p,
+footer a {
+  font-family: "DM Sans", sans-serif;
+}
+
 .clickable-name {
   cursor: pointer;
   transition: all 0.2s ease;
@@ -461,6 +506,10 @@ h1 em {
   font-size: clamp(0.95rem, 2vw, 1.1rem);
   margin-bottom: 1.7rem;
   max-width: 62ch;
+}
+
+.hero-desc-dm {
+  font-family: "DM Sans", sans-serif;
 }
 
 .speaker-name {
@@ -565,6 +614,7 @@ h1 em {
 .seat-label {
   position: relative;
   z-index: 1;
+  font-family: "DM Sans", sans-serif;
   color: #c8e8d0;
   font-size: 0.84rem;
   text-transform: uppercase;
@@ -587,6 +637,7 @@ h1 em {
   position: relative;
   z-index: 1;
   margin-top: 0.3rem;
+  font-family: "DM Sans", sans-serif;
   color: #d3eed9;
   font-size: 0.88rem;
 }
