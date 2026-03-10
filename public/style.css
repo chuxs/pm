@@ -396,6 +396,14 @@ body.instructor-open {
   margin-bottom: 2px;
 }
 
+.instructor-copy-poppins .instructor-headline,
+.instructor-copy-poppins .instructor-sub,
+.instructor-copy-poppins p,
+.instructor-copy-poppins .instructor-cred-text,
+.instructor-copy-poppins .instructor-cred-text strong {
+  font-family: "Poppins", sans-serif;
+}
+
 .clickable-name {
   cursor: pointer;
   transition: all 0.2s ease;
