@@ -1,3 +1,4 @@
 node_modules/
 .env
 pm_launchpad_sales_page.html
+pm-seats-default-rtdb-export.json

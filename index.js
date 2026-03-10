@@ -1,12 +1,13 @@
 // Import required libraries
-import express from "express"; 
-import bodyParser from "body-parser"; 
-import path from "path"; 
-import { fileURLToPath } from "url"; 
+import express from "express";
+import bodyParser from "body-parser";
+import path from "path";
+import { fileURLToPath } from "url";
 import { initializeApp } from "firebase/app";
-import { getDatabase, ref, get, runTransaction } from "firebase/database";
+import { getDatabase, ref, get, set, runTransaction } from "firebase/database";
 import Stripe from "stripe"; // Stripe payment library
 import dotenv from "dotenv";
+import nodemailer from "nodemailer";
 
 // Load environment variables from .env file
 dotenv.config();
@@ -22,11 +23,31 @@ const __dirname = path.dirname(__filename);
 // Set up Stripe payment processor with secret key from environment variables
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const stripeEndpointSecret = process.env.STRIPE_WEBHOOK_SECRET; // Secret to verify Stripe webhook requests
+const webhookCodeVersion = "2026-03-10-email-seat-v2";
+
+const emailTransporter =
+  process.env.EMAIL_USER && process.env.EMAIL_PASS
+    ? nodemailer.createTransport({
+        host: process.env.EMAIL_HOST || "smtp.gmail.com",
+        port: Number(process.env.EMAIL_PORT || 465),
+        secure: process.env.EMAIL_SECURE !== "true",
+        auth: {
+          user: process.env.EMAIL_USER,
+          pass: String(process.env.EMAIL_PASS).replace(/\s+/g, ""),
+        },
+      })
+    : null;
 
 // Warn if webhook secret is missing (won't be able to verify Stripe payments)
 if (!stripeEndpointSecret) {
   console.warn(
     "Warning: STRIPE_WEBHOOK_SECRET not set. Webhook signature verification will fail.",
+  );
+}
+
+if (!emailTransporter) {
+  console.warn(
+    "Warning: EMAIL_USER/EMAIL_PASS not set. Buyer confirmation emails are disabled.",
   );
 }
 
@@ -56,7 +77,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // Serve static files (CSS, images, etc.) from the "public" folder
 app.use(express.static(path.join(__dirname, "public")));
 
-
 // Function to fetch seat availability data from Firebase database
 const getSeatsData = async () => {
   try {
@@ -80,6 +100,126 @@ const getSeatsData = async () => {
   }
 };
 
+const extractSeatNumber = (seatId) => {
+  const match = String(seatId).match(/(\d+)/);
+  return match ? Number(match[1]) : Number.POSITIVE_INFINITY;
+};
+
+const getSortedSeatIds = async () => {
+  const seatIdRef = ref(db, "seatID");
+  const snapshot = await get(seatIdRef);
+  const seatData = snapshot.val();
+
+  if (!seatData || typeof seatData !== "object") {
+    return [];
+  }
+
+  const collected = new Set();
+  for (const [key, value] of Object.entries(seatData)) {
+    if (typeof key === "string" && key.trim().length > 0) {
+      collected.add(key);
+      continue;
+    }
+
+    if (value && typeof value.seatId === "string") {
+      collected.add(value.seatId);
+    }
+  }
+
+  return [...collected].sort((a, b) => {
+    const numberA = extractSeatNumber(a);
+    const numberB = extractSeatNumber(b);
+
+    if (numberA !== numberB) {
+      return numberA - numberB;
+    }
+
+    return a.localeCompare(b);
+  });
+};
+
+const assignNextSeatId = async (availableAfterPurchase) => {
+  const seatIds = await getSortedSeatIds();
+
+  if (!seatIds.length) {
+    throw new Error("No seat IDs found in seatID node.");
+  }
+
+  const available = Number(availableAfterPurchase);
+  if (!Number.isFinite(available) || available < 0) {
+    throw new Error("Invalid available seat count after purchase.");
+  }
+
+  const soldCount = seatIds.length - available;
+  const assignedIndex = soldCount - 1;
+
+  if (assignedIndex < 0 || assignedIndex >= seatIds.length) {
+    throw new Error("No remaining seat IDs to assign.");
+  }
+
+  const seatId = seatIds[assignedIndex];
+
+  if (!seatId) {
+    throw new Error("Failed to resolve assigned seat ID.");
+  }
+
+  return {
+    seatId,
+    seatNumber: extractSeatNumber(seatId),
+    seatIndex: assignedIndex,
+  };
+};
+
+const markSeatReserved = async (seatId) => {
+  const statusRef = ref(db, `seatID/${seatId}/status`);
+  await set(statusRef, "reserved");
+};
+
+const saveRegistration = async ({
+  sessionId,
+  customerName,
+  customerEmail,
+  seatId,
+  seatNumber,
+  amountTotal,
+  currency,
+}) => {
+  const registrationRef = ref(db, `registrations/${sessionId}`);
+  await set(registrationRef, {
+    sessionId,
+    customerName,
+    customerEmail,
+    seatId,
+    seatNumber,
+    amountTotal: amountTotal ?? null,
+    currency: currency ?? null,
+    createdAt: Date.now(),
+  });
+};
+
+const sendSeatConfirmationEmail = async ({
+  customerName,
+  customerEmail,
+  seatId,
+}) => {
+  if (!emailTransporter) {
+    throw new Error("Email transporter not configured.");
+  }
+
+  await emailTransporter.sendMail({
+    from: process.env.EMAIL_FROM || `PM Launchpad <${process.env.EMAIL_USER}>`,
+    to: customerEmail,
+    subject: "Payment confirmed - Your PM Launchpad seat",
+    html: `
+      <p>Hi ${customerName || "there"},</p>
+      <p>Thank you for your payment. Your seat is confirmed.</p>
+      <p><strong>Your Seat ID: ${seatId}</strong></p>
+      <p>We will share the remaining event details with you shortly.</p>
+      <p>PM Launchpad Team</p>
+    `,
+  });
+};
+
 // Route: When user visits the home page (/)
 app.get("/", async (req, res) => {
   // Get current seat data from Firebase
@@ -99,8 +239,11 @@ app.get("/api/health", async (req, res) => {
       timestamp: new Date().toISOString(),
       seats: seats,
       config: {
+        webhookCodeVersion,
         hasStripeKey: !!process.env.STRIPE_SECRET_KEY, // Check if Stripe key is set
         hasWebhookSecret: !!process.env.STRIPE_WEBHOOK_SECRET, // Check if webhook secret is set
+        hasEmailUser: !!process.env.EMAIL_USER,
+        hasEmailPass: !!process.env.EMAIL_PASS,
         nodeVersion: process.version, // Show Node.js version
       },
     });
@@ -147,14 +290,30 @@ app.post(
     const eventTx = await runTransaction(
       eventRef,
       (current) => {
-        // If event already exists in database, skip processing
-        if (current !== null) {
+        // If event has already completed, skip processing.
+        if (current?.status === "completed") {
           return;
         }
 
-        // Mark this event as processed with timestamp
+        // Allow retries for previously failed events.
+        if (current?.status === "failed") {
+          return {
+            ...current,
+            status: "processing",
+            updatedAt: Date.now(),
+          };
+        }
+
+        // If another instance is processing this event, skip duplicate handling.
+        if (current?.status === "processing") {
+          return;
+        }
+
+        // Mark this event as in progress.
         return {
-          processedAt: Date.now(),
+          status: "processing",
+          createdAt: Date.now(),
+          updatedAt: Date.now(),
           type: event.type,
         };
       },
@@ -167,20 +326,114 @@ app.post(
       return res.status(200).json({ received: true, duplicate: true });
     }
 
+    console.log("[STEP 1] Dedup check passed, event is new:", event.id);
+
     // Handle payment completion event
     if (event.type === "checkout.session.completed") {
       const session = event.data.object;
       console.log("Payment completed for session:", session.id);
 
-      // Decrement available seats when payment is confirmed
+      const customerName = session.customer_details?.name || "there";
+      const customerEmail =
+        session.customer_details?.email || session.customer_email;
+
+      if (!customerEmail) {
+        await set(eventRef, {
+          status: "failed",
+          type: event.type,
+          failedAt: Date.now(),
+          reason: "Missing customer email in Stripe session",
+        });
+        return res.status(400).json({ error: "Missing customer email" });
+      }
+
       try {
-        const result = await decrementSeats();
-        return res.status(200).json({ received: true, success: result });
+        console.log("Step 1: decrementing seats");
+        const availableAfterPurchase = await decrementSeats();
+        console.log(
+          "Step 2: available after purchase:",
+          availableAfterPurchase,
+        );
+
+        if (availableAfterPurchase === null) {
+          await set(eventRef, {
+            status: "failed",
+            type: event.type,
+            failedAt: Date.now(),
+            reason: "No seats available to decrement",
+          });
+          return res.status(409).json({ error: "No seats available" });
+        }
+
+        const assigned = await assignNextSeatId(availableAfterPurchase);
+        console.log("Step 3: assigned seat:", assigned);
+
+        await markSeatReserved(assigned.seatId);
+        console.log("Step 4: seat reserved");
+
+        await saveRegistration({
+          sessionId: session.id,
+          customerName,
+          customerEmail,
+          seatId: assigned.seatId,
+          seatNumber: assigned.seatNumber,
+          amountTotal: session.amount_total,
+          currency: session.currency,
+        });
+        console.log("Step 5: registration saved - about to send email");
+
+        let emailSent = false;
+        let emailError = null;
+
+        try {
+          console.log(
+            "Attempting to send email to:",
+            customerEmail,
+            "name:",
+            customerName,
+          );
+          await sendSeatConfirmationEmail({
+            customerName,
+            customerEmail,
+            seatId: assigned.seatId,
+          });
+          emailSent = true;
+        } catch (emailSendError) {
+          emailError = emailSendError.message;
+          console.error(
+            "Failed to send buyer confirmation email:",
+            emailSendError,
+          );
+        }
+
+        await set(eventRef, {
+          status: "completed",
+          type: event.type,
+          processedAt: Date.now(),
+          sessionId: session.id,
+          seatId: assigned.seatId,
+          customerEmail,
+          emailSent,
+          emailError,
+        });
+
+        return res.status(200).json({
+          received: true,
+          success: true,
+          seatId: assigned.seatId,
+          emailSent,
+        });
       } catch (error) {
-        console.error("Error decrementing seats:", error);
+        console.error("Error processing completed checkout session:", error);
+        await set(eventRef, {
+          status: "failed",
+          type: event.type,
+          failedAt: Date.now(),
+          reason: error.message,
+        });
         return res
           .status(500)
-          .json({ error: "Failed to process seat decrement" });
+          .json({ error: "Failed to process payment event" });
       }
     } else {
       // Ignore other event types we don't care about
@@ -224,12 +477,12 @@ const decrementSeats = async () => {
         "Seats decremented successfully. Available:",
         tx.snapshot.val(),
       );
-      return true;
+      return Number(tx.snapshot.val());
     }
 
     // Transaction failed - no seats available
     console.error("Failed to decrement seats - no seats available");
-    return false;
+    return null;
   } catch (error) {
     console.error("Error in decrementSeats:", error);
     throw error;
