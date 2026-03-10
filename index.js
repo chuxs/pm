@@ -23,14 +23,13 @@ const __dirname = path.dirname(__filename);
 // Set up Stripe payment processor with secret key from environment variables
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const stripeEndpointSecret = process.env.STRIPE_WEBHOOK_SECRET; // Secret to verify Stripe webhook requests
-const webhookCodeVersion = "2026-03-10-email-seat-v2";
 
 const emailTransporter =
   process.env.EMAIL_USER && process.env.EMAIL_PASS
     ? nodemailer.createTransport({
         host: process.env.EMAIL_HOST || "smtp.gmail.com",
         port: Number(process.env.EMAIL_PORT || 465),
-        secure: process.env.EMAIL_SECURE !== "true",
+        secure: process.env.EMAIL_SECURE !== "false",
         auth: {
           user: process.env.EMAIL_USER,
           pass: String(process.env.EMAIL_PASS).replace(/\s+/g, ""),
@@ -239,11 +238,8 @@ app.get("/api/health", async (req, res) => {
       timestamp: new Date().toISOString(),
       seats: seats,
       config: {
-        webhookCodeVersion,
         hasStripeKey: !!process.env.STRIPE_SECRET_KEY, // Check if Stripe key is set
         hasWebhookSecret: !!process.env.STRIPE_WEBHOOK_SECRET, // Check if webhook secret is set
-        hasEmailUser: !!process.env.EMAIL_USER,
-        hasEmailPass: !!process.env.EMAIL_PASS,
         nodeVersion: process.version, // Show Node.js version
       },
     });
@@ -326,8 +322,6 @@ app.post(
       return res.status(200).json({ received: true, duplicate: true });
     }
 
-    console.log("[STEP 1] Dedup check passed, event is new:", event.id);
-
     // Handle payment completion event
     if (event.type === "checkout.session.completed") {
       const session = event.data.object;
@@ -348,12 +342,7 @@ app.post(
       }
 
       try {
-        console.log("Step 1: decrementing seats");
         const availableAfterPurchase = await decrementSeats();
-        console.log(
-          "Step 2: available after purchase:",
-          availableAfterPurchase,
-        );
 
         if (availableAfterPurchase === null) {
           await set(eventRef, {
@@ -366,10 +355,8 @@ app.post(
         }
 
         const assigned = await assignNextSeatId(availableAfterPurchase);
-        console.log("Step 3: assigned seat:", assigned);
 
         await markSeatReserved(assigned.seatId);
-        console.log("Step 4: seat reserved");
 
         await saveRegistration({
           sessionId: session.id,
@@ -380,18 +367,11 @@ app.post(
           amountTotal: session.amount_total,
           currency: session.currency,
         });
-        console.log("Step 5: registration saved - about to send email");
 
         let emailSent = false;
         let emailError = null;
 
         try {
-          console.log(
-            "Attempting to send email to:",
-            customerEmail,
-            "name:",
-            customerName,
-          );
           await sendSeatConfirmationEmail({
             customerName,
             customerEmail,
