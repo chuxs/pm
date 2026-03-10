@@ -205,6 +205,8 @@ const sendSeatConfirmationEmail = async ({
     throw new Error("Email transporter not configured.");
   }
 
+  const seatNumber = seatId.match(/pm-(\d+)ver/)?.[1] || "N/A";
+
   await emailTransporter.sendMail({
     from: process.env.EMAIL_FROM || `PM Launchpad <${process.env.EMAIL_USER}>`,
     to: customerEmail,
@@ -212,6 +214,7 @@ const sendSeatConfirmationEmail = async ({
     html: `
       <p>Hi ${customerName || "there"},</p>
       <p>Thank you for your payment. Your seat is confirmed.</p>
+      <p><strong>Your Seat Number: ${seatNumber}</strong></p>
       <p><strong>Your Seat ID: ${seatId}</strong></p>
       <p>We will share the remaining event details with you shortly.</p>
       <p>PM Launchpad Team</p>
